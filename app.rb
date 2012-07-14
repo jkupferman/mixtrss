@@ -13,18 +13,18 @@ SOUNDCLOUD_CONFIG = YAML.load_file("config/soundcloud.yml")
 PAGE_SIZE = 100
 
 get '/' do
-  'Hello World'
+  erb :index
 end
 
-get '/mixes' do
-  genre = 'mashup'
-  key = ['tracks', genre].join('/')
+get '/mixes/:genre' do
+  genre = params[:genre] || 'mashup'
+  key = ['soundcloud', 'tracks', genre].join('/')
 
   mixes = settings.cache.fetch(key) do
     client = Soundcloud.new(:client_id => SOUNDCLOUD_CONFIG["id"])
 
     mixes = []
-    2.times do |i|
+    4.times do |i|
       tracks = client.get('/tracks',
                           :genres => genre,
                           :duration => {
@@ -42,5 +42,5 @@ get '/mixes' do
     mixes.sort_by { |t| t.playback_count || 0 }.reverse
   end
 
-  mixes.to_json
+  mixes[0...5].to_json
 end
