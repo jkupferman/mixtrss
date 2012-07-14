@@ -3,6 +3,7 @@ GEM
   specs:
     crack (0.1.8)
     daemons (1.1.8)
+    dalli (2.1.0)
     eventmachine (0.12.10)
     hashie (1.2.0)
     httmultiparty (0.3.8)
@@ -36,6 +37,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dalli
   json
   rake (= 0.8.7)
   shotgun
