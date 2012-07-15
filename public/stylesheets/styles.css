@@ -31,7 +31,17 @@ ul.genres {
 
 ul.genres li {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 5px 15px;
+    border-right: 1px solid #000;
+    margin-left: -4px;
+}
+
+ul.genres li.first {
+    border-left: 1px solid #000;
+}
+
+ul.genres li.selected {
+    font-weight: bold;
 }
 
 ul.genres li:hover {

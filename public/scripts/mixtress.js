@@ -1,6 +1,13 @@
 $(function() {
     var container = $('#container');
+    var genres = {};
+    // keep handles to the genres by name
+    $.each($('ul.genres li'), function(i, genre) {
+        genre = $(genre);
+        genres[genre.data('genre')] = genre;
+    });
 
+    // get the currently selected genre
     var genre = window.location.hash || 'mashup';
     if(genre.indexOf('#') == 0) {
         genre = genre.slice(1); // remove the leading hash if there is one
@@ -12,6 +19,11 @@ $(function() {
     });
 
     var loadGenre = function(genre) {
+        container.empty(); // clear it out
+        // select the appropriate element
+        $('ul.genres li').removeClass('selected');
+        genres[genre].addClass('selected');
+
         var url = '/mixes/' + genre;
         $.getJSON(url, function(data) {
             var mixes = $('<ul>').addClass('mixes').addClass(genre);
