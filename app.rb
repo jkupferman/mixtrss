@@ -10,7 +10,8 @@ set :cache, Dalli::Client.new
 
 SOUNDCLOUD_ID = ENV['SOUNDCLOUD_ID'] || YAML.load_file("config/soundcloud.yml")["id"]
 
-PAGE_SIZE = 200
+FETCH_PAGE_SIZE = 200
+RETURN_PAGE_SIZE = 5
 
 AVAILABLE_GENRES = ["bass", "dance", "deep", "dubstep",
                     "electronic", "house", "mashup",
@@ -21,10 +22,13 @@ get '/' do
   erb :index
 end
 
-get '/mixes/:genre' do
-  genre = params[:genre].strip.downcase || 'mashup'
+get '/mixes/:genre/?:page?' do
+  genre = (params[:genre] || 'mashup').strip.downcase
   # make sure no one is passing in any crazy genres
   genre = 'mashup' unless AVAILABLE_GENRES.include?(genre)
+
+  page = (params[:page] || 0).to_i
+  page = 0 if page < 0 || page > 20
 
   key = ['sc', 'tracks', genre].join('/')
 
@@ -33,15 +37,15 @@ get '/mixes/:genre' do
 
     mixes = []
     5.times do |i|
-      puts "Requesting #{genre} #{PAGE_SIZE} #{i*PAGE_SIZE}"
+      puts "Requesting #{genre} #{FETCH_PAGE_SIZE} #{i*FETCH_PAGE_SIZE}"
       tracks = client.get('/tracks',
                           :genres => genre,
                           :duration => {
                             :from => 1200000  # mixes must be a least 20 minutes
                           },
                           :order => 'hotness',
-                          :limit => PAGE_SIZE,
-                          :offset => i * PAGE_SIZE
+                          :limit => FETCH_PAGE_SIZE,
+                          :offset => i * FETCH_PAGE_SIZE
                           )
 
       break if tracks.empty?
@@ -51,5 +55,6 @@ get '/mixes/:genre' do
     mixes.sort_by { |t| t.playback_count || 0 }.reverse[0...100]
   end
 
-  mixes[0...5].to_json
+  offset = page * RETURN_PAGE_SIZE
+  mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end

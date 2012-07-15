@@ -1,11 +1,13 @@
 body {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 1em;
-    margin: 20px 100px;
+    width: 1000px;
+    margin: 20px auto;
 }
 
 ul {
     list-style-type: none;
+    padding: 0;
 }
 
 #header {
@@ -55,9 +57,5 @@ ul.mixes li {
 
 #container {
     min-height: 300px;
-}
-
-#footer {
-    padding-top: 100px;
-    text-align: center;
+    padding-bottom: 100px;
 }
