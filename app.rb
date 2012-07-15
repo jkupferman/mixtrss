@@ -8,7 +8,7 @@ require 'soundcloud'
 
 set :cache, Dalli::Client.new
 
-SOUNDCLOUD_CONFIG = YAML.load_file("config/soundcloud.yml")
+SOUNDCLOUD_ID = ENV['SOUNDCLOUD_ID'] || YAML.load_file("config/soundcloud.yml")["id"]
 
 PAGE_SIZE = 100
 
@@ -21,7 +21,7 @@ get '/mixes/:genre' do
   key = ['soundcloud', 'tracks', genre].join('/')
 
   mixes = settings.cache.fetch(key) do
-    client = Soundcloud.new(:client_id => SOUNDCLOUD_CONFIG["id"])
+    client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
 
     mixes = []
     4.times do |i|
