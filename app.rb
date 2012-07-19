@@ -60,7 +60,7 @@ def tracks(genre, force=false)
       page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
       client.get("/tracks", params).to_a.reject { |t| t.nil? }
     end
-    mixes.flatten.select { |m| m }.sort_by { |t| freshness(t) }.reverse[0...100]
+    mixes.flatten.select { |m| m }.sort_by { |t| freshness(t) }.reverse[0...100].map { |e| { 'uri' => e['uri'] } }
   end
 end
 
