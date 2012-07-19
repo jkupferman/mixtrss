@@ -24,15 +24,16 @@ get "/" do
   erb :index
 end
 
-get "/mixes/:genre/?:page?" do
-  genre = (params[:genre] || "mashup").strip.downcase
+get "/mixes/:genres/?:page?" do
+  genres = params[:genres].to_s.strip.downcase
+  genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }
   # make sure no one is passing in any crazy genres
-  genre = "mashup" unless AVAILABLE_GENRES.include?(genre)
+  genres = AVAILABLE_GENRES if genres.empty?
 
   page = (params[:page] || 0).to_i
   page = 0 if page < 0 || page > 20
 
-  mixes = tracks(genre)
+  mixes = genres.map { |genre| tracks(genre) }.flatten.sort_by { |t| freshness(t) }.reverse
 
   offset = page * RETURN_PAGE_SIZE
   mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
