@@ -58,11 +58,7 @@ def tracks(genre, force=false)
         :offset => i * FETCH_PAGE_SIZE
       }
       page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
-      settings.cache.delete(page_key) if force
-      settings.cache.fetch(page_key) do
-        puts "Missed Cache. Fetching page #{page_key}"
-        client.get("/tracks", params).to_a.reject { |t| t.nil? }
-      end
+      client.get("/tracks", params).to_a.reject { |t| t.nil? }
     end
     mixes.flatten.select { |m| m }.sort_by { |t| freshness(t) }.reverse[0...100]
   end
