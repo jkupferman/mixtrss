@@ -44,7 +44,6 @@ def tracks(genre, force=false)
   genre_key = "topgenretracks/#{genre}"
   settings.cache.delete(genre_key) if force
   settings.cache.fetch(genre_key) do
-    # TODO: Refresh this at a sane interval
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
 
     mixes = PAGE_FETCH_COUNT.times.map do |i|
@@ -62,9 +61,7 @@ def tracks(genre, force=false)
       settings.cache.delete(page_key) if force
       settings.cache.fetch(page_key) do
         puts "Missed Cache. Fetching page #{page_key}"
-        tracks = client.get("/tracks", params)
-
-        tracks.to_a.reject { |t| t.nil? }
+        client.get("/tracks", params).to_a.reject { |t| t.nil? }
       end
     end
     mixes.flatten.select { |m| m }.sort_by { |t| freshness(t) }.reverse[0...100]
