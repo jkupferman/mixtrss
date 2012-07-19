@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+require "rubygems"
 require './app'
 
 puts "Refreshing tracks"
