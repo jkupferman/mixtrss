@@ -38,10 +38,12 @@ get "/mixes/:genre/?:page?" do
   mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end
 
-def tracks(genre)
+def tracks(genre, force=false)
   # returns the top 100 tracks for the provided genre, sorted by freshness
   puts "Fetching #{genre}"
-  settings.cache.fetch("topgenretracks/#{genre}") do
+  genre_key = "topgenretracks/#{genre}"
+  settings.cache.delete(genre_key) if force
+  settings.cache.fetch(genre_key) do
     # TODO: Refresh this at a sane interval
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
 
@@ -56,7 +58,9 @@ def tracks(genre)
         :limit => FETCH_PAGE_SIZE,
         :offset => i * FETCH_PAGE_SIZE
       }
-      settings.cache.fetch(params.to_s) do
+      page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
+      settings.cache.delete(page_key) if force
+      settings.cache.fetch(page_key) do
         puts "Missed Cache. Fetching page #{params.to_s}"
         tracks = client.get("/tracks", params)
 
