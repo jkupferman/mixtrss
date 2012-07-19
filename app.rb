@@ -61,7 +61,7 @@ def tracks(genre, force=false)
       page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
       settings.cache.delete(page_key) if force
       settings.cache.fetch(page_key) do
-        puts "Missed Cache. Fetching page #{params.to_s}"
+        puts "Missed Cache. Fetching page #{page_key}"
         tracks = client.get("/tracks", params)
 
         tracks.to_a.reject { |t| t.nil? }
@@ -74,7 +74,8 @@ end
 def freshness track
   # returns a floating point number, representing the "freshness" of the track
   elapsed = (Date.today - Date.parse(track["created_at"]))
-  elapsed = 1 if elapsed.zero?
-  plays = track["playback_count"] || 0
+  elapsed = 1 if elapsed < 1
+  plays = track["playback_count"]
+  plays = 1 if plays.nil? || plays < 1
   plays.to_f / (elapsed ** 1.1)
 end
