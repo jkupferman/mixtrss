@@ -4,6 +4,7 @@ require './app'
 
 forced = ARGV && ARGV[0].to_s.downcase() == 'force'
 puts "Refreshing tracks. Forced = #{forced}"
+
 threads = []
 AVAILABLE_GENRES.each do |genre|
   threads << Thread.new do |t|

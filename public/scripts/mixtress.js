@@ -1,53 +1,66 @@
 $(function() {
     var container = $('#container');
 
-    // get the currently selected genre
-    var genre = window.location.hash;
-    var page = 0;
-    if(genre.indexOf('/') >= 0) {
-        // check if the genre has a slash, and thus a page number
-        var tokens = genre.split('/');
-        genre = tokens[0];
-        page = tokens[1];
-    } else {
-        genre = window.location.hash || 'mashup';
-    }
-
-    if(genre.indexOf('#') == 0) {
-        genre = genre.slice(1); // remove the leading hash if there is one
-    }
-
-    var genres = {};
+    var genresEl = {};
     // keep handles to the genres by name
     $.each($('ul.genres li'), function(i, genre) {
         genre = $(genre);
-        genres[genre.data('genre')] = genre;
+        genresEl[genre.data('genre')] = genre;
     });
+
+    var hash = window.location.hash;
+    if(hash.indexOf('#') == 0) {
+        hash = hash.slice(1); // remove the leading hash if there is one
+    }
+
+    var genres = [];
+    var page = 0;
+    if(hash.indexOf('/') >= 0) {
+        // check if the genre has a slash, and thus a page number
+        var tokens = hash.split('/');
+        genres = tokens[0].split(',');
+        page = tokens[1];
+    } else {
+        genres = hash.split(',');
+    }
+
+    if(genres.length < 1 || (genres.length == 1 && genres[0] == '')) {
+        // default to all genres on
+        genres = $.map(genresEl, function(v, k) { return k; });
+    }
 
     // handle users selecting a genre
     $('ul.genres li').click(function() {
-        genre = $(this).data('genre');
+        var genre = $(this).data('genre');
+        if($(this).hasClass('selected')) {
+            genres.splice(genres.indexOf(genre), 1);
+        } else {
+            genres.push(genre);
+        }
         page = 0;
-        loadGenre(genre, page);
+        loadGenres(genres, page);
     });
 
-    var loadGenre = function(genre, pageNum) {
+    var loadGenres = function(genres, pageNum) {
         if(pageNum > 20) { return; }
-        console.log("LOADING:", genre, pageNum);
-        window.location.hash = genre + '/' + pageNum;
+        console.log("LOADING:", genres, pageNum);
+        var urlPath = genres.join(',') + '/' + pageNum;
+        window.location.hash = urlPath;
 
         if(pageNum == 0) {
             // when its a new genre we should clear out the entries
             container.empty();
         }
 
-        // select the appropriate nav element
+        // select the appropriate nav elements
         $('ul.genres li').removeClass('selected');
-        genres[genre].addClass('selected');
+        $.each(genres, function(i, genre) {
+            genresEl[genre].addClass('selected');
+        });
 
-        var url = '/mixes/' + genre + '/' + pageNum;
+        var url = '/mixes/' + urlPath;
         $.getJSON(url, function(data) {
-            var mixes = $('<ul>').addClass('mixes').addClass(genre).addClass(pageNum);
+            var mixes = $('<ul>').addClass('mixes').addClass(genres).addClass(pageNum);
             container.append(mixes);
             $.each(data, function(i, mix) {
                 var mixEl = $('<li>').addClass('mix').addClass(mix.id);
@@ -66,8 +79,7 @@ $(function() {
         });
     };
 
-    loadGenre(genre, page);
-
+    loadGenres(genres, page);
 
     // Handle scroll events for loading more entries
     var canScroll = true;
@@ -80,7 +92,7 @@ $(function() {
         // when we get close to the bottom, pull in more entries
         if ($(this).scrollTop() + $(this).height() >= ($(document).height() - 200)) {
             page++;
-            loadGenre(genre, page);
+            loadGenres(genres, page);
         }
     });
 });
