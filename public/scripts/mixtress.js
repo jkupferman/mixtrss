@@ -1,5 +1,6 @@
 $(function() {
     var container = $('#container');
+    var loadingEl = $('<div>').addClass('loading').html($('<img>').attr('src', '/images/blocks.gif'));
 
     var genresEl = {};
     // keep handles to the genres by name
@@ -61,6 +62,7 @@ $(function() {
         var url = '/mixes/' + urlPath;
         $.getJSON(url, function(data) {
             var mixes = $('<ul>').addClass('mixes').addClass(genres).addClass(pageNum);
+            mixes.html(loadingEl);
             container.append(mixes);
             $.each(data, function(i, mix) {
                 var mixEl = $('<li>').addClass('mix').addClass(mix.id);
@@ -73,9 +75,11 @@ $(function() {
                 mixEl.html(iframeEl);
                 mixes.append(mixEl);
             });
+            $('div.loading').remove();
         }).error(function() {
             var message = $('<div>').addClass('error').html('Oh noes! An error occured fetching the top mixes. Please try again later');
             container.html(message);
+            $('div.loading').remove();
         });
     };
 

@@ -57,6 +57,10 @@ ul.mixes li {
     padding: 10px 0 20px;
 }
 
+div.loading {
+    text-align: center;
+}
+
 #container {
     min-height: 300px;
     padding-bottom: 100px;
