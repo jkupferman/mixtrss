@@ -15,8 +15,8 @@
     </div>
     <div id="nav">
       <ul class="genres">
-        <% @genres.each do |g| %>
-          <li data-genre="<%= g %>"><%= g.capitalize %></li>
+        <% @genres.each_with_index do |g, i| %>
+          <li data-genre="<%= g %>" class="<%= 'first' if i.zero? %>"><i></i><%= g.capitalize %></li>
         <% end %>
       </ul>
     </div>

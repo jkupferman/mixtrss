@@ -32,8 +32,9 @@ ul.genres {
 }
 
 ul.genres li {
+    color: #a0a0a0;
     display: inline-block;
-    padding: 5px 15px;
+    padding: 5px 12px;
     border-right: 1px solid #000;
     margin-left: -4px;
 }
@@ -44,6 +45,7 @@ ul.genres li.first {
 
 ul.genres li.selected {
     font-weight: bold;
+    color: #000;
 }
 
 ul.genres li:hover {
