@@ -59,10 +59,12 @@ $(function() {
             genresEl[genre].addClass('selected');
         });
 
+        // add in the loading gif
+        container.append(loadingEl);
+
         var url = '/mixes/' + urlPath;
         $.getJSON(url, function(data) {
             var mixes = $('<ul>').addClass('mixes').addClass(genres).addClass(pageNum);
-            mixes.html(loadingEl);
             container.append(mixes);
             $.each(data, function(i, mix) {
                 var mixEl = $('<li>').addClass('mix').addClass(mix.id);
