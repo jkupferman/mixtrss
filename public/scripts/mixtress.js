@@ -73,11 +73,27 @@ $(function() {
                                           .attr('frameborder', 'no');
                 var url = 'http://w.soundcloud.com/player/?url=' + entry.uri + '&show_artwork=true&show_comments=false';
                 iframe.attr('src', url);
+                iframe.addClass('mixframe');
                 mix.html(iframe);
                 mixes.append(mix);
             });
             container.append(mixes);
             $('div.loading').remove();
+
+            // Track how often music is played
+            var lastSent = new Date().getTime();
+            $.each($('.mixframe'), function(i, mix) {
+                SC.Widget(mix).bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
+                    // only count it as an event every so often
+                    if((new Date().getTime() - lastSent) > 60000) {
+                        var mixId = $(mix).attr('src').match('/tracks/(\\d+)')[1];  // soundcloud id of the mix
+                        var position = $('.mixframe').index(mix);  // what was its position in the list
+                        _gaq.push(['_trackEvent', 'Mix', 'Playing', mixId, position]);
+
+                        lastSent = new Date().getTime();
+                    }
+                });
+            });
         }).error(function() {
             var message = $('<div>').addClass('error').html('Oh noes! An error occured fetching the top mixes. Please try again later');
             container.html(message);
@@ -100,8 +116,4 @@ $(function() {
             loadGenres(selectedGenres, ++page);
         }
     });
-
-    // Keep track of how long people are listening for
-    // FIXME: This should use actual soundcloud events
-    setInterval(function() { _gaq.push(['_trackEvent', 'Mix', 'Listen']); }, 60000);
 });
