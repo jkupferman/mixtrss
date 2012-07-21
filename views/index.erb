@@ -9,6 +9,10 @@
     <link href="/stylesheets/styles.css" media="screen" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <div id="info">
+      <span class="about">About</span> |
+      <span class="contact">Contact</span>
+    </div>
     <div id="header">
       <a href="/" alt="mixtress: the best long mixes from soundcloud">
         <span class="welcome">welcome to...</span>
@@ -18,7 +22,7 @@
     <div id="nav">
       <ul class="genres">
         <% @genres.each_with_index do |g, i| %>
-          <li data-genre="<%= g %>" class="<%= 'first' if i.zero? %>"><i></i><%= g.capitalize %></li>
+          <li data-genre="<%= g %>" class="<%= 'first' if i.zero? %>"><%= g.capitalize %></li>
         <% end %>
       </ul>
     </div>
@@ -26,8 +30,6 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/scripts/soundcloud.api.js"></script>
-    <script src="/scripts/mixtress.js?v=3"></script>
-
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-33565901-1']);
@@ -42,5 +44,36 @@
       }
       })();
     </script>
+    <script src="/scripts/mixtress.js?v=3"></script>
+    <script src="/scripts/jquery.simplemodal.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('#info span.about').click(function() { $('#about').modal(); });
+        $('#info span.contact').click(function() { $('#contact').modal(); });
+      });
+    </script>
+
+    <div id="about" style="display: none">
+      <h2>About</h2>
+      <div>
+        Everybody's got a favorite band, a favorite album, a favorite song.  You've invested into it your time, and from that investment spawned an intimate relationship. You're familiar with every texture and tone — that snare rush three minutes into the track still gives you goosebumps.
+      </div>
+      <div>
+        But it's been a while.  It seems played.  Waking up one morning, you're surprised to find that, like a butterfly emerging from its cocoon, you can see the world outside.  The romance is over and you know it — here's your Mixtress.
+      </div>
+    </div>
+
+    <div id="contact" style="display: none">
+      <h2>Contact</h2>
+      <form action="/contact" method="post">
+        <label for="name">Name:</label>
+        <input type="text" name="name">
+        <label for="email">Email:</label>
+        <input type="text" name="email">
+        <label for="to">Message:</label>
+        <textarea name="message" rows="10" cols="80"></textarea>
+        <input type="submit" value="Send the Love">
+      </form>
+    </div>
   </body>
 </html>

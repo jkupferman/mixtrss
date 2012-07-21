@@ -2,7 +2,7 @@ body {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 1em;
     width: 1000px;
-    margin: 20px auto;
+    margin: 0px auto;
 }
 
 ul {
@@ -30,6 +30,16 @@ ul {
 #header span.welcome {
     font-style: italic;
     padding-left: 3px;
+}
+
+#info {
+    text-align: right;
+    font-size: 0.8em;
+}
+
+#info span:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 ul.genres {
@@ -71,3 +81,65 @@ div.loading {
     min-height: 300px;
     padding-bottom: 100px;
 }
+
+#about h2, #contact h2 {
+    margin: 0;
+}
+
+#about h2 {
+    margin-bottom: 10px;
+}
+
+#about div {
+    line-height: 1.2em;
+    padding-bottom: 5px;
+}
+
+#contact form {
+    font-size: 1.2em;
+}
+
+#contact label {
+    display: block;
+    padding-top: 7px;
+}
+
+#contact input {
+    display: block;
+    width: 300px;
+}
+
+#contact input, #contact textarea {
+    border: 2px solid #efefef;
+    padding: 3px;
+}
+
+#contact input[type=submit] {
+    background-color: #efefef;
+    border: 2px solid #afafaf;
+    width: 120px;
+    margin-left: 2px;
+}
+
+/*
+ * SimpleModal Basic Modal Dialog
+ * http://www.ericmmartin.com/projects/simplemodal/
+ * http://code.google.com/p/simplemodal/
+ *
+ * Copyright (c) 2010 Eric Martin - http://ericmmartin.com
+ *
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ * Revision: $Id: basic.css 257 2010-07-27 23:06:56Z emartin24 $
+ */
+#basic-modal-content {display:none;}
+/* Overlay */
+#simplemodal-overlay {background-color:#000;}
+/* Container */
+#simplemodal-container {height:360px; width:600px; color:#efefef; background-color:#333; border:4px solid #fff; padding:12px;}
+#simplemodal-container .simplemodal-data {padding:8px;}
+#simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
+#simplemodal-container a {color:#ddd;}
+#simplemodal-container a.modalCloseImg {background:url(/images/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+#simplemodal-container h3 {color:#84b8d9;}
