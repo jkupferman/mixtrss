@@ -79,6 +79,7 @@ $(function() {
             });
             container.append(mixes);
             $('div.loading').remove();
+            _gaq.push(['_trackEvent', 'Loading', 'Success', urlPath]);
 
             // Track how often music is played
             var lastSent = new Date().getTime();
@@ -98,6 +99,7 @@ $(function() {
             var message = $('<div>').addClass('error').html('Oh noes! An error occured fetching the top mixes. Please try again later');
             container.html(message);
             $('div.loading').remove();
+            _gaq.push(['_trackEvent', 'Loading', 'Error', urlPath]);
         });
     };
 
