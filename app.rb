@@ -41,6 +41,26 @@ get "/mixes/:genres/?:page?" do
   ordered_mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end
 
+post "/contact" do
+  require 'pony'
+  Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
+            :to => 'jmkupferman+mixstress@gmail.com',
+            :subject => "Mixtress contact from #{params[:name]}",
+            :body => params[:message],
+            :port => '587',
+            :via => :smtp,
+            :via_options => {
+              :address              => 'smtp.gmail.com',
+              :port                 => '587',
+              :enable_starttls_auto => true,
+              :user_name            => ENV['GMAIL_SMTP_USER'],
+              :password             => ENV['GMAIL_SMTP_PASSWORD'],
+              :authentication       => :plain,
+              :domain               => 'localhost.localdomain'
+            })
+  redirect '/'
+end
+
 def tracks(genre, force=false)
   # returns the top 100 tracks for the provided genre, sorted by freshness
   puts "Fetching #{genre}"
