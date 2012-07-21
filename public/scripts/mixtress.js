@@ -42,7 +42,7 @@ $(function() {
     });
 
     var loadGenres = function(genres, pageNum) {
-        if(pageNum > 20) { return; }
+        if(pageNum > 10) { return; }
         console.log("LOADING:", genres, pageNum);
         var urlPath = genres.join(',') + '/' + pageNum;
         window.location.hash = urlPath;
@@ -108,13 +108,13 @@ $(function() {
     // Handle scroll events for loading more entries
     var scrollReady = true;
     // throttle how often the scroll event is handled
-    var scrollInterval = setInterval(function () { scrollReady = true; }, 500);
+    var scrollInterval = setInterval(function () { scrollReady = true; }, 300);
 
     $(window).bind('scroll', function () {
         if(!scrollReady) { return; }
         scrollReady = false;
         // when we get close to the bottom, pull in more entries
-        if (($(this).scrollTop() + $(this).height()) >= ($(document).height() - 200)) {
+        if (($(this).scrollTop() + $(this).height()) >= ($(document).height() - 500)) {
             loadGenres(selectedGenres, ++page);
         }
     });

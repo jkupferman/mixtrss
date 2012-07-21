@@ -13,7 +13,7 @@ SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")[
 
 FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 20
-RETURN_PAGE_SIZE = 5
+RETURN_PAGE_SIZE = 10
 
 AVAILABLE_GENRES = ["bass", "dance", "deep", "dubstep",
                     "electronic", "house", "mashup",
@@ -31,7 +31,7 @@ get "/mixes/:genres/?:page?" do
   genres = AVAILABLE_GENRES if genres.empty?
 
   page = (params[:page] || 0).to_i
-  page = 0 if page < 0 || page > 20
+  page = 0 if page < 0 || page > 10
 
   combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
 
