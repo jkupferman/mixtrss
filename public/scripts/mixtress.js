@@ -48,6 +48,8 @@ $(function() {
         var urlPath = genres.join(',') + '/' + pageNum;
         window.location.hash = urlPath;
 
+        _gaq.push(['_trackPageview', urlPath]);
+
         if(pageNum == 0) {
             // when its a new genre we should clear out the entries
             container.empty();
