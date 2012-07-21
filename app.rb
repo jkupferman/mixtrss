@@ -49,7 +49,8 @@ def tracks(genre, force=false)
   settings.cache.fetch(genre_key) do
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
 
-    mixes = PAGE_FETCH_COUNT.times.map do |i|
+    mixes = []
+    PAGE_FETCH_COUNT.times do |i|
       puts "Requesting #{genre} #{FETCH_PAGE_SIZE} #{i*FETCH_PAGE_SIZE}"
       params = {
         :genres => genre,
@@ -61,9 +62,14 @@ def tracks(genre, force=false)
         :offset => i * FETCH_PAGE_SIZE
       }
       page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
-      client.get("/tracks", params).to_a.reject { |t| t.nil? }
+      tracks = client.get("/tracks", params).to_a.reject { |t| t.nil? }
+      if tracks && tracks.any?
+        mixes.concat(tracks)
+      else
+        break # we've reached the end of that genre
+      end
     end
-    mixes.flatten.select { |m| m }.sort_by { |t| freshness(t) }.reverse[0...100].map { |e| { :uri => e['uri'], :score => freshness(e) } }
+    mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100].map { |e| { :uri => e['uri'], :score => freshness(e) } }
   end
 end
 
