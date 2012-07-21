@@ -1,0 +1,3 @@
+Disallow: /rufio/rufio/ru/fi/o
+
+Sitemap: http://mixtress.herokuapp.com/sitemap.xml
