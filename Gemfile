@@ -11,5 +11,6 @@ gem 'json'
 gem 'thin'
 gem 'dalli'
 gem 'soundcloud'
+gem 'pony'
 
 gem 'heroku'
