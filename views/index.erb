@@ -7,6 +7,20 @@
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <meta content="Listen to the hottest long mixes from Soundcloud" name="description" />
     <link href="/stylesheets/styles.css" media="screen" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-33565901-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      // Only load the tracker if we aren't on localhost
+      if(document.location.host.indexOf('localhost') < 0) {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      }
+      })();
+    </script>
   </head>
   <body>
     <div id="info">
@@ -30,20 +44,6 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/scripts/soundcloud.api.js"></script>
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-33565901-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-      // Only load the tracker if we aren't on localhost
-      if(document.location.host.indexOf('localhost') < 0) {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      }
-      })();
-    </script>
     <script src="/scripts/mixtress.js?v=3"></script>
     <script src="/scripts/jquery.simplemodal.js"></script>
     <script type="text/javascript">
