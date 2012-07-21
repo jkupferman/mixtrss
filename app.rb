@@ -44,7 +44,7 @@ end
 post "/contact" do
   require 'pony'
   Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
-            :to => 'jmkupferman+mixstress@gmail.com',
+            :to => 'jmkupferman+mixtress@gmail.com',
             :subject => "Mixtress contact from #{params[:name]}",
             :body => params[:message],
             :port => '587',
