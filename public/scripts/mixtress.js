@@ -103,4 +103,8 @@ $(function() {
             loadGenres(genres, page);
         }
     });
+
+    // Keep track of how long people are listening for
+    // FIXME: This should use actual soundcloud events
+    setInterval(function() { _gaq.push(['_trackEvent', 'Mix', 'Listen']); }, 60000);
 });
