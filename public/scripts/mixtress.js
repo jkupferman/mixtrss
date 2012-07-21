@@ -1,12 +1,11 @@
 $(function() {
     var container = $('#container');
-    var loadingEl = $('<div>').addClass('loading').html($('<img>').attr('src', '/images/blocks.gif'));
+    var loading = $('<div>').addClass('loading').html($('<img>').attr('src', '/images/blocks.gif'));
 
-    var genresEl = {};
+    var genreMap = {};
     // keep handles to the genres by name
     $.each($('ul.genres li'), function(i, genre) {
-        genre = $(genre);
-        genresEl[genre.data('genre')] = genre;
+        genreMap[$(genre).data('genre')] = $(genre);
     });
 
     var hash = window.location.hash;
@@ -14,32 +13,32 @@ $(function() {
         hash = hash.slice(1); // remove the leading hash if there is one
     }
 
-    var genres = [];
+    var selectedGenres = [];
     var page = 0;
     if(hash.indexOf('/') >= 0) {
         // check if the genre has a slash, and thus a page number
         var tokens = hash.split('/');
-        genres = tokens[0].split(',');
+        selectedGenres = tokens[0].split(',');
         page = tokens[1];
     } else {
-        genres = hash.split(',');
+        selectedGenres = hash.split(',');
     }
 
-    if(genres.length < 1 || (genres.length == 1 && genres[0] == '')) {
+    if(selectedGenres.length < 1 || (selectedGenres.length == 1 && selectedGenres[0] == '')) {
         // default to all genres on
-        genres = $.map(genresEl, function(v, k) { return k; });
+        selectedGenres = $.map(genreMap, function(v, k) { return k; });
     }
 
     // handle users selecting a genre
     $('ul.genres li').click(function() {
         var genre = $(this).data('genre');
         if($(this).hasClass('selected')) {
-            genres.splice(genres.indexOf(genre), 1);
+            selectedGenres.splice(selectedGenres.indexOf(genre), 1);
         } else {
-            genres.push(genre);
+            selectedGenres.push(genre);
         }
         page = 0;
-        loadGenres(genres, page);
+        loadGenres(selectedGenres, page);
     });
 
     var loadGenres = function(genres, pageNum) {
@@ -58,27 +57,26 @@ $(function() {
         // select the appropriate nav elements
         $('ul.genres li').removeClass('selected');
         $.each(genres, function(i, genre) {
-            genresEl[genre].addClass('selected');
+            genreMap[genre].addClass('selected');
         });
 
-        // add in the loading gif
-        container.append(loadingEl);
+        // display the loading gif
+        container.append(loading);
 
-        var url = '/mixes/' + urlPath;
-        $.getJSON(url, function(data) {
-            var mixes = $('<ul>').addClass('mixes').addClass(genres).addClass(pageNum);
-            container.append(mixes);
-            $.each(data, function(i, mix) {
-                var mixEl = $('<li>').addClass('mix').addClass(mix.id);
-                var iframeEl = $('<iframe>').attr('width', '100%')
-                                         .attr('height', 166)
-                                         .attr('scrolling', 'no')
-                                         .attr('frameborder', 'no');
-                var url = 'http://w.soundcloud.com/player/?url=' + mix.uri + '&show_artwork=true&show_comments=false';
-                iframeEl.attr('src', url);
-                mixEl.html(iframeEl);
-                mixes.append(mixEl);
+        $.getJSON('/mixes/' + urlPath, function(data) {
+            var mixes = $('<ul>').addClass('mixes').addClass(pageNum);
+            $.each(data, function(i, entry) {
+                var mix = $('<li>').addClass('mix').addClass(entry.id);
+                var iframe = $('<iframe>').attr('width', '100%')
+                                          .attr('height', 166)
+                                          .attr('scrolling', 'no')
+                                          .attr('frameborder', 'no');
+                var url = 'http://w.soundcloud.com/player/?url=' + entry.uri + '&show_artwork=true&show_comments=false';
+                iframe.attr('src', url);
+                mix.html(iframe);
+                mixes.append(mix);
             });
+            container.append(mixes);
             $('div.loading').remove();
         }).error(function() {
             var message = $('<div>').addClass('error').html('Oh noes! An error occured fetching the top mixes. Please try again later');
@@ -87,20 +85,19 @@ $(function() {
         });
     };
 
-    loadGenres(genres, page);
+    loadGenres(selectedGenres, page);
 
     // Handle scroll events for loading more entries
-    var canScroll = true;
+    var scrollReady = true;
     // throttle how often the scroll event is handled
-    var scrollInterval = setInterval(function () { canScroll = true; }, 500);
+    var scrollInterval = setInterval(function () { scrollReady = true; }, 500);
 
     $(window).bind('scroll', function () {
-        if(!canScroll) { return; }
-        canScroll = false;
+        if(!scrollReady) { return; }
+        scrollReady = false;
         // when we get close to the bottom, pull in more entries
-        if ($(this).scrollTop() + $(this).height() >= ($(document).height() - 200)) {
-            page++;
-            loadGenres(genres, page);
+        if (($(this).scrollTop() + $(this).height()) >= ($(document).height() - 200)) {
+            loadGenres(selectedGenres, ++page);
         }
     });
 
