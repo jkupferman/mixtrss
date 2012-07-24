@@ -14,9 +14,9 @@ AVAILABLE_GENRES.each do |genre|
       puts "Getting #{genre} attempt #{attempts}"
       tracks(genre, force=(forced && (attempts == 1)))
     rescue Soundcloud::ResponseError => e
-      sleep 3
+      sleep attempts ** attempts
       puts "Response Error! #{e.response}"
-      retry if attempts < 5
+      retry if attempts < 10
     end
   end
 end
