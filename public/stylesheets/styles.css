@@ -49,7 +49,7 @@ ul.genres {
 ul.genres li {
     color: #a0a0a0;
     display: inline-block;
-    padding: 5px 12px;
+    padding: 5px 10px;
     border-right: 1px solid #000;
     margin-left: -4px;
 }
@@ -66,6 +66,12 @@ ul.genres li.selected {
 ul.genres li:hover {
     background-color: #efefef;
     cursor: pointer;
+}
+
+ul.genres li i {
+    padding-right: 3px;
+    font-style: normal;
+    font-size: 15px;
 }
 
 ul.mixes li {

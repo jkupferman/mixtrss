@@ -32,7 +32,10 @@ $(function() {
     // handle users selecting a genre
     $('ul.genres li').click(function() {
         var genre = $(this).data('genre');
-        if($(this).hasClass('selected')) {
+        if(selectedGenres.length == $('ul.genres li').length) {
+            // All genres were selected, take it down to the single selected genre
+            selectedGenres = [genre];
+        } else if($(this).hasClass('selected')) {
             selectedGenres.splice(selectedGenres.indexOf(genre), 1);
         } else {
             selectedGenres.push(genre);
@@ -56,8 +59,10 @@ $(function() {
 
         // select the appropriate nav elements
         $('ul.genres li').removeClass('selected');
+        $('ul.genres li i').html("&#9734;");
         $.each(genres, function(i, genre) {
             genreMap[genre].addClass('selected');
+            genreMap[genre].find('i').html("&#9733");
         });
 
         // display the loading gif
