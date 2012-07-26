@@ -6,7 +6,8 @@
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <meta content="Listen to the hottest long mixes from Soundcloud" name="description" />
-    <link href="/stylesheets/styles.css" media="screen" rel="stylesheet" type="text/css" />
+    <% version = 4 %>
+    <link href="/stylesheets/styles.css?v=<%= version %>" media="screen" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-33565901-1']);
@@ -44,7 +45,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/scripts/soundcloud.api.js"></script>
-    <script src="/scripts/mixtress.js?v=3"></script>
+    <script src="/scripts/mixtress.js?v=<%= version %>"></script>
     <script src="/scripts/jquery.simplemodal.js"></script>
     <script type="text/javascript">
       $(function() {
