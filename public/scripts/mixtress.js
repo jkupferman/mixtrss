@@ -24,22 +24,15 @@ $(function() {
         selectedGenres = hash.split(',');
     }
 
-    if(selectedGenres.length < 1 || (selectedGenres.length == 1 && selectedGenres[0] == '')) {
-        // default to all genres on
-        selectedGenres = $.map(genreMap, function(v, k) { return k; });
+    if(selectedGenres.length < 1 || selectedGenres[0] == "") {
+        // default to electronic
+        selectedGenres = ['electronic'];
     }
 
     // handle users selecting a genre
     $('ul.genres li').click(function() {
         var genre = $(this).data('genre');
-        if(selectedGenres.length == $('ul.genres li').length) {
-            // All genres were selected, take it down to the single selected genre
-            selectedGenres = [genre];
-        } else if($(this).hasClass('selected')) {
-            selectedGenres.splice(selectedGenres.indexOf(genre), 1);
-        } else {
-            selectedGenres.push(genre);
-        }
+        selectedGenres = [genre];
         page = 0;
         loadGenres(selectedGenres, page);
     });
@@ -59,10 +52,8 @@ $(function() {
 
         // select the appropriate nav elements
         $('ul.genres li').removeClass('selected');
-        $('ul.genres li i').html("&#9734;");
         $.each(genres, function(i, genre) {
             genreMap[genre].addClass('selected');
-            genreMap[genre].find('i').html("&#9733");
         });
 
         // display the loading gif

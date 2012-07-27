@@ -1,5 +1,5 @@
 body {
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 1em;
     width: 1000px;
     margin: 0px auto;
@@ -24,17 +24,18 @@ ul {
     font-size: 5em;
     line-height: 0.7em;
     letter-spacing: -2px;
-    margin-top: 0px
+    margin: 0;
+    padding: 25px 0;
 }
 
-#header span.welcome {
-    font-style: italic;
-    padding-left: 3px;
+#header h1:hover {
+    cursor: pointer;
 }
 
 #info {
     text-align: right;
     font-size: 0.8em;
+    padding-top: 5px;
 }
 
 #info span:hover {
@@ -44,27 +45,25 @@ ul {
 
 ul.genres {
     text-align: center;
+    color: #efefef;
 }
 
 ul.genres li {
     color: #a0a0a0;
     display: inline-block;
-    padding: 5px 10px;
-    border-right: 1px solid #000;
-    margin-left: -4px;
-}
-
-ul.genres li.first {
-    border-left: 1px solid #000;
+    margin: 5px 15px;
+    padding-bottom: 1px;
+    border-bottom: 1px solid transparent;
 }
 
 ul.genres li.selected {
     font-weight: bold;
     color: #000;
+    border-bottom: 1px solid #000;
 }
 
 ul.genres li:hover {
-    background-color: #efefef;
+    border-bottom: 1px solid #a0a0a0;
     cursor: pointer;
 }
 
@@ -72,6 +71,7 @@ ul.genres li i {
     padding-right: 3px;
     font-style: normal;
     font-size: 15px;
+    display: none;
 }
 
 ul.mixes li {
