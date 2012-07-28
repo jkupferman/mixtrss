@@ -27,10 +27,6 @@
     </script>
   </head>
   <body>
-    <div id="info">
-      <span class="about">About</span> /
-      <span class="contact">Contact</span>
-    </div>
     <div id="header">
       <a href="/" alt="mixtress: the best long mixes from soundcloud">
         <h1>Mixtress</h1>
@@ -40,6 +36,13 @@
     <div id="navigation"></div>
     <div id="container"></div>
     <div id="pagination"></div>
+
+    <div id="footer">
+      <span class="about">About</span>
+      <span class="separator"> / </span>
+      <span class="contact">Contact</span>
+    </div>
+
 
     <script id="mix-template" type="text/template">
         <iframe width="100%" height="166" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url={{ uri }}&show_artwork=true&show_comments=false"></iframe>
@@ -81,8 +84,8 @@
     <script src="/scripts/jquery.simplemodal.js"></script>
     <script type="text/javascript">
       $(function() {
-        $('#info span.about').click(function() { $('#about').modal(); });
-        $('#info span.contact').click(function() { $('#contact').modal(); });
+        $('#footer span.about').click(function() { $('#about').modal(); });
+        $('#footer span.contact').click(function() { $('#contact').modal(); });
       });
     </script>
 
@@ -104,7 +107,7 @@
         <label for="email">Email:</label>
         <input type="text" name="email">
         <label for="to">Message:</label>
-        <textarea name="message" rows="10" cols="80"></textarea>
+        <textarea name="message" rows="9" cols="80"></textarea>
         <input type="submit" value="Send the Love">
       </form>
     </div>

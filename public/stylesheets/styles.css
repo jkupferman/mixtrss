@@ -32,17 +32,6 @@ ul {
     cursor: pointer;
 }
 
-#info {
-    text-align: right;
-    font-size: 0.8em;
-    padding-top: 5px;
-}
-
-#info span:hover {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
 ul.genres {
     text-align: center;
 }
@@ -71,7 +60,7 @@ ul.genres li a:hover {
     border-bottom: 1px solid #a0a0a0;
 }
 
-ul.genres li span.separator {
+span.separator {
     color: #efefef;
 }
 
@@ -86,7 +75,7 @@ div.loading {
 
 #container {
     min-height: 2006px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 }
 
 section.pagination {
@@ -101,7 +90,7 @@ section.pagination a {
 }
 
 section.pagination a:hover {
-    color: #000;
+    color: #a0a0a0;
     border-bottom: 1px solid #a0a0a0;
 }
 
@@ -109,8 +98,27 @@ section.pagination a.next {
     float: right;
 }
 
+#footer {
+    text-align: center;
+    font-size: 0.8em;
+    padding-top: 5px;
+    padding-bottom: 50px;
+    color: #a0a0a0;
+}
+
+#footer span {
+    padding-bottom: 1px;
+    border-bottom: 1px solid transparent;
+}
+
+#footer span:hover {
+    cursor: pointer;
+    border-bottom: 1px solid #a0a0a0;
+}
+
 #about h2, #contact h2 {
     margin: 0;
+    font-size: 2em;
 }
 
 #about h2 {
@@ -118,6 +126,7 @@ section.pagination a.next {
 }
 
 #about div {
+    font-size: 1.1em;
     line-height: 1.2em;
     padding-bottom: 5px;
 }
@@ -168,7 +177,7 @@ section.pagination a.next {
 /* Overlay */
 #simplemodal-overlay {background-color:#000;}
 /* Container */
-#simplemodal-container {height:360px; width:600px; color:#efefef; background-color:#444; border:4px solid #fff; padding:12px;}
+#simplemodal-container {height:360px; width:600px; color:#000; background-color:#FFF; border:4px solid #3A3A3A; padding:12px;}
 #simplemodal-container .simplemodal-data {padding:8px;}
 #simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
 #simplemodal-container a {color:#ddd;}
