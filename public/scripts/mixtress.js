@@ -89,6 +89,8 @@ Mixtress.Collection.Mixes = Backbone.Collection.extend({
 });
 
 Mixtress.View.MixView = Backbone.View.extend({
+    tagName: 'li',
+    className: 'mix',
     initialize: function() {
         this.template = _.template($('#mix-template').html());
     },
