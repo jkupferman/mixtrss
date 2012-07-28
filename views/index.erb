@@ -36,8 +36,10 @@
         <h1>Mixtress</h1>
       </a>
     </div>
+
     <div id="navigation"></div>
     <div id="container"></div>
+    <div id="pagination"></div>
 
     <script id="mix-template" type="text/template">
       <li class="mix">
@@ -63,6 +65,16 @@
       <span class="separator">{{ separator }}</span>
     </script>
 
+    <script id="pagination-template" type="text/template">
+      <a href="/{{ genre }}/{{ previousPage }}" class="previous {{ previousClasses }}">
+        &#8592;
+        Previous
+      </div>
+      <a href="/{{ genre }}/{{ nextPage }}" class="next {{ nextClasses }}">
+        Next
+        &#8594;
+      </div>
+    </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>

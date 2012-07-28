@@ -32,13 +32,17 @@ var Mixtress = new Backbone.Application({
             home: function() {
                 console.log("CALLED INDEX");
                 // default the user to the first page of the "all" genre
-                Mixtress.router.navigate('/all/0', true);
+                Mixtress.router.navigate('/electronic/0', true);
             },
             mixes: function(genre, page) {
+                console.log("MIXES CALLED:", genre, page);
+
                 Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre})
                 $('#navigation').empty().append(Mixtress.views.navigationview.render().el);
 
-                console.log("MIXES CALLED:", genre, page);
+                Mixtress.views.paginationview = new Mixtress.View.PaginationView({genre: genre, page: page})
+                $('#pagination').empty().append(Mixtress.views.paginationview.render().el);
+
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
                 Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
                 Mixtress.collections.mixes.fetch();
@@ -78,7 +82,6 @@ Mixtress.Collection.Mixes = Backbone.Collection.extend({
     initialize: function(models, options) {
         this.genre = options.genre;
         this.page = options.page;
-        console.log("MIXES FOR:", this.genre, this.page);
     },
     url: function() {
         return BASE_URL + '/mixes/' + this.genre + '/' + this.page;
@@ -131,7 +134,6 @@ Mixtress.View.NavigationView = Backbone.View.extend({
         var that = this;
         $(this.el).html(this.template({}));
 
-        var genreTemplate = _.template($('#navigation-entry-template').html());
         var $genres = this.$('.genres');
         _(AVAILABLE_GENRES).each(function(genre, i) {
             var view = new Mixtress.View.NavigationEntryView({
@@ -169,6 +171,34 @@ Mixtress.View.NavigationEntryView = Backbone.View.extend({
         }));
         return this;
     },
+});
+
+Mixtress.View.PaginationView = Backbone.View.extend({
+    tagName: 'section',
+    className: 'pagination',
+    events: {
+        'click a': 'navigate'
+    },
+    initialize: function(options) {
+        _.bindAll(this, 'render');
+        this.template = _.template($('#pagination-template').html());
+        this.selectedGenre = options.genre;
+        this.selectedPage = parseInt(options.page);
+    },
+    render: function() {
+        $(this.el).html(this.template({
+            genre: this.selectedGenre,
+            previousPage: this.selectedPage - 1,
+            previousClasses: this.selectedPage == 0 ? "hidden" : "",
+            nextPage: this.selectedPage + 1,
+            nextClasses: this.selectedPage == 9 ? "hidden" : ""
+        }));
+
+        return this;
+    },
+    navigate: function() {
+        $('body').animate({scrollTop: 0});
+    }
 });
 
 

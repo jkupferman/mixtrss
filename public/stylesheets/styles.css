@@ -86,7 +86,27 @@ div.loading {
 
 #container {
     min-height: 300px;
-    padding-bottom: 100px;
+    padding-bottom: 40px;
+}
+
+section.pagination {
+    padding-bottom: 40px;
+}
+
+section.pagination a {
+    color: #000;
+    text-decoration: none;
+    padding-bottom: 1px;
+    border-bottom: 1px solid transparent;
+}
+
+section.pagination a:hover {
+    color: #000;
+    border-bottom: 1px solid #a0a0a0;
+}
+
+section.pagination a.next {
+    float: right;
 }
 
 #about h2, #contact h2 {
@@ -126,6 +146,10 @@ div.loading {
     border: 2px solid #afafaf;
     width: 120px;
     margin-left: 2px;
+}
+
+.hidden {
+    display: none;
 }
 
 /*
