@@ -47,7 +47,10 @@ var Mixtress = new Backbone.Application({
                 Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
                 Mixtress.collections.mixes.fetch();
 
+                $('li.mix iframe').remove();  // clear out all the iframes for good measure
                 $('#container').empty().append(Mixtress.views.mixesview.render().el);
+
+                _gaq.push(['_trackPageview', Backbone.history.fragment]);
             },
             unknown: function(path) {
                 console.log("CALLED UNKNOWN");
