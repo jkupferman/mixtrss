@@ -1,117 +1,119 @@
-$(function() {
-    var container = $('#container');
-    var loading = $('<div>').addClass('loading').html($('<img>').attr('src', '/images/blocks.gif'));
+var BASE_URL = 'http://localhost:9393';
 
-    var genreMap = {};
-    // keep handles to the genres by name
-    $.each($('ul.genres li'), function(i, genre) {
-        genreMap[$(genre).data('genre')] = $(genre);
-    });
+// Use {{ mustache }} template delimiters to avoid ERB conflicts
+_.templateSettings = { interpolate : /\{\{([\s\S]+?)\}\}/g };
 
-    var hash = window.location.hash;
-    if(hash.indexOf('#') == 0) {
-        hash = hash.slice(1); // remove the leading hash if there is one
-    }
-
-    var selectedGenres = [];
-    var page = 0;
-    if(hash.indexOf('/') >= 0) {
-        // check if the genre has a slash, and thus a page number
-        var tokens = hash.split('/');
-        selectedGenres = tokens[0].split(',');
-        page = tokens[1];
-    } else {
-        selectedGenres = hash.split(',');
-    }
-
-    if(selectedGenres.length < 1 || selectedGenres[0] == "") {
-        // default to electronic
-        selectedGenres = ['electronic'];
-    }
-
-    // handle users selecting a genre
-    $('ul.genres li').click(function() {
-        var genre = $(this).data('genre');
-        selectedGenres = [genre];
-        page = 0;
-        loadGenres(selectedGenres, page);
-    });
-
-    var loadGenres = function(genres, pageNum) {
-        if(pageNum > 10) { return; }
-        console.log("LOADING:", genres, pageNum);
-        var urlPath = genres.join(',') + '/' + pageNum;
-        window.location.hash = urlPath;
-
-        _gaq.push(['_trackPageview', urlPath]);
-
-        if(pageNum == 0) {
-            // when its a new genre we should clear out the entries
-            container.empty();
-        }
-
-        // select the appropriate nav elements
-        $('ul.genres li').removeClass('selected');
-        $.each(genres, function(i, genre) {
-            genreMap[genre].addClass('selected');
-        });
-
-        // display the loading gif
-        container.append(loading);
-
-        $.getJSON('/mixes/' + urlPath, function(data) {
-            var mixes = $('<ul>').addClass('mixes').addClass(pageNum);
-            $.each(data, function(i, entry) {
-                var mix = $('<li>').addClass('mix').addClass(entry.id);
-                var iframe = $('<iframe>').attr('width', '100%')
-                                          .attr('height', 166)
-                                          .attr('scrolling', 'no')
-                                          .attr('frameborder', 'no');
-                var url = 'http://w.soundcloud.com/player/?url=' + entry.uri + '&show_artwork=true&show_comments=false';
-                iframe.attr('src', url);
-                iframe.addClass('mixframe');
-                mix.html(iframe);
-                mixes.append(mix);
-            });
-            container.append(mixes);
-            $('div.loading').remove();
-            _gaq.push(['_trackEvent', 'Loading', 'Success', urlPath]);
-
-            // Track how often music is played
-            var lastSent = new Date().getTime();
-            $.each($('.mixframe'), function(i, mix) {
-                SC.Widget(mix).bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
-                    // only count it as an event every so often
-                    if((new Date().getTime() - lastSent) > 60000) {
-                        var mixId = $(mix).attr('src').match('/tracks/(\\d+)')[1];  // soundcloud id of the mix
-                        var position = $('.mixframe').index(mix);  // what was its position in the list
-                        _gaq.push(['_trackEvent', 'Mix', 'Playing', mixId, position]);
-
-                        lastSent = new Date().getTime();
-                    }
-                });
-            });
-        }).error(function() {
-            var message = $('<div>').addClass('error').html('Oh noes! An error occured fetching the top mixes. Please try again later');
-            container.html(message);
-            $('div.loading').remove();
-            _gaq.push(['_trackEvent', 'Loading', 'Error', urlPath]);
-        });
+Backbone.Application = function(attributes) {
+    application = {
+        // Singular, Capital Namespaces for class declarations
+        Model: {}, View: {}, Collection: {},
+        // plural, lowercase namespaces for instances
+        models: {}, views: {}, collections: {},
+        // global event dispatcher
+        dispatcher: _.clone(Backbone.Events)
     };
-
-    loadGenres(selectedGenres, page);
-
-    // Handle scroll events for loading more entries
-    var scrollReady = true;
-    // throttle how often the scroll event is handled
-    var scrollInterval = setInterval(function () { scrollReady = true; }, 300);
-
-    $(window).bind('scroll', function () {
-        if(!scrollReady) { return; }
-        scrollReady = false;
-        // when we get close to the bottom, pull in more entries
-        if (($(this).scrollTop() + $(this).height()) >= ($(document).height() - 500)) {
-            loadGenres(selectedGenres, ++page);
+    for (var property in attributes) {
+        if (attributes.hasOwnProperty(property)) {
+            application[property] = attributes[property];
         }
-    });
+    }
+    return application;
+};
+
+var Mixtress = new Backbone.Application({
+    initialize: function() {
+        Mixtress.Router = Backbone.Router.extend({
+            routes: {
+                '': 'home',
+                '/': 'home',
+                ':genre/:page': 'mixes',
+                '*path': 'unknown'
+            },
+            home: function() {
+                console.log("CALLED INDEX");
+                // default the user to the first page of the "all" genre
+                Mixtress.router.navigate('/all/0', true);
+            },
+            mixes: function(genre, page) {
+                console.log("MIXES CALLED:", genre, page);
+                Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
+                Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
+                Mixtress.collections.mixes.fetch();
+
+                $('#container').empty().append(Mixtress.views.mixesview.render().el);
+            },
+            unknown: function(path) {
+                console.log("CALLED UNKNOWN");
+                console.log('ACTION is:', path);
+                console.log(window.location.pathname);
+            },
+        });
+        // Instantiate router
+        Mixtress.router = new Mixtress.Router();
+        Backbone.history.start();
+
+        // Bind all the links whose hrefs start with a / to call internal navigation
+        $(document).on('click', "a[href^='/']", function(event) {
+            if(!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+                event.preventDefault();
+                var url = $(event.currentTarget).attr("href").replace(/^\//, "");
+                Mixtress.router.navigate(url, true);
+            }
+        });
+    }
 });
+
+Mixtress.Model.Mix = Backbone.Model.extend({
+    defaults: {
+        uri: '',
+        score: 0
+    }
+});
+
+Mixtress.Collection.Mixes = Backbone.Collection.extend({
+    model: Mixtress.Model.Mix,
+    initialize: function(models, options) {
+        this.genre = options.genre;
+        this.page = options.page;
+        console.log("MIXES FOR:", this.genre, this.page);
+    },
+    url: function() {
+        return BASE_URL + '/mixes/' + this.genre + '/' + this.page;
+    },
+});
+
+Mixtress.View.MixView = Backbone.View.extend({
+    initialize: function() {
+        this.template = _.template($('#mix-template').html());
+    },
+    render: function() {
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
+    },
+});
+
+Mixtress.View.MixesView = Backbone.View.extend({
+    tagName: 'section',
+    className: 'container',
+    initialize: function() {
+        _.bindAll(this, 'render');
+        this.template = _.template($('#mixes-template').html());
+        this.collection.bind('reset', this.render);
+    },
+    render: function() {
+        var collection = this.collection;
+        $(this.el).html(this.template({}));
+
+        var $mixes = this.$('.mixes');
+        collection.each(function(mix, i) {
+            var view = new Mixtress.View.MixView({
+                model: mix,
+                collection: collection
+            });
+            $mixes.append(view.render().el);
+        });
+        return this;
+    }
+});
+
+$(Mixtress.initialize);
