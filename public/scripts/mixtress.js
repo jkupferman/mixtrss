@@ -1,4 +1,4 @@
-var BASE_URL = 'http://localhost:9393';
+var BASE_URL = document.location.protocol + '//' + document.location.host;
 
 // Use {{ mustache }} template delimiters to avoid ERB conflicts
 _.templateSettings = { interpolate : /\{\{([\s\S]+?)\}\}/g };
