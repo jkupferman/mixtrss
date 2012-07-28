@@ -82,7 +82,6 @@ def tracks(genre, force=false)
       }
       params[:genres] = genre unless genre == "all"
 
-      page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
       tracks = client.get("/tracks", params).to_a.reject { |t| t.nil? }
       if tracks && tracks.any?
         mixes.concat(tracks.select { |t| is_mix? t })
