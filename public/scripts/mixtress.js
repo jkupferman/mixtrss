@@ -37,10 +37,10 @@ var Mixtress = new Backbone.Application({
             mixes: function(genre, page) {
                 console.log("MIXES CALLED:", genre, page);
 
-                Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre})
+                Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre});
                 $('#navigation').empty().append(Mixtress.views.navigationview.render().el);
 
-                Mixtress.views.paginationview = new Mixtress.View.PaginationView({genre: genre, page: page})
+                Mixtress.views.paginationview = new Mixtress.View.PaginationView({genre: genre, page: page});
                 $('#pagination').empty().append(Mixtress.views.paginationview.render().el);
 
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
@@ -56,7 +56,7 @@ var Mixtress = new Backbone.Application({
                 console.log("CALLED UNKNOWN");
                 console.log('ACTION is:', path);
                 console.log(window.location.pathname);
-            },
+            }
         });
         // Instantiate router
         Mixtress.router = new Mixtress.Router();
@@ -88,7 +88,7 @@ Mixtress.Collection.Mixes = Backbone.Collection.extend({
     },
     url: function() {
         return BASE_URL + '/mixes/' + this.genre + '/' + this.page;
-    },
+    }
 });
 
 Mixtress.View.MixView = Backbone.View.extend({
@@ -100,7 +100,7 @@ Mixtress.View.MixView = Backbone.View.extend({
     render: function() {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
-    },
+    }
 });
 
 Mixtress.View.MixesView = Backbone.View.extend({
@@ -175,7 +175,7 @@ Mixtress.View.NavigationEntryView = Backbone.View.extend({
             classes: classes
         }));
         return this;
-    },
+    }
 });
 
 Mixtress.View.PaginationView = Backbone.View.extend({
@@ -205,7 +205,5 @@ Mixtress.View.PaginationView = Backbone.View.extend({
         $('body').animate({scrollTop: 0});
     }
 });
-
-
 
 $(Mixtress.initialize);
