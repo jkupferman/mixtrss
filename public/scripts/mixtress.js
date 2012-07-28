@@ -32,7 +32,7 @@ var Mixtress = new Backbone.Application({
             home: function() {
                 console.log("CALLED INDEX");
                 // default the user to the first page of the "all" genre
-                Mixtress.router.navigate('/electronic/0', true);
+                Mixtress.router.navigate('/all/0', true);
             },
             mixes: function(genre, page) {
                 console.log("MIXES CALLED:", genre, page);
