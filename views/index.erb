@@ -38,9 +38,9 @@
     <div id="pagination"></div>
 
     <div id="footer">
-      <span class="about">About</span>
+      <a class="about">About</a>
       <span class="separator"> / </span>
-      <span class="contact">Contact</span>
+      <a class="contact">Contact</a>
     </div>
 
 
@@ -85,8 +85,8 @@
     <script src="/scripts/jquery.simplemodal.js"></script>
     <script type="text/javascript">
       $(function() {
-        $('#footer span.about').click(function() { $('#about').modal(); });
-        $('#footer span.contact').click(function() { $('#contact').modal(); });
+        $('#footer a.about').click(function() { $('#about').modal(); });
+        $('#footer a.contact').click(function() { $('#contact').modal(); });
       });
     </script>
 
