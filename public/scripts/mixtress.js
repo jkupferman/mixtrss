@@ -35,6 +35,9 @@ var Mixtress = new Backbone.Application({
                 Mixtress.router.navigate('/all/0', true);
             },
             mixes: function(genre, page) {
+                Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre})
+                $('#navigation').empty().append(Mixtress.views.navigationview.render().el);
+
                 console.log("MIXES CALLED:", genre, page);
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
                 Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
@@ -115,5 +118,59 @@ Mixtress.View.MixesView = Backbone.View.extend({
         return this;
     }
 });
+
+Mixtress.View.NavigationView = Backbone.View.extend({
+    tagName: 'section',
+    className: 'navigation',
+    initialize: function(options) {
+        _.bindAll(this, 'render');
+        this.template = _.template($('#navigation-template').html());
+        this.selectedGenre = options.genre;
+    },
+    render: function() {
+        var that = this;
+        $(this.el).html(this.template({}));
+
+        var genreTemplate = _.template($('#navigation-entry-template').html());
+        var $genres = this.$('.genres');
+        _(AVAILABLE_GENRES).each(function(genre, i) {
+            var view = new Mixtress.View.NavigationEntryView({
+                genre: genre,
+                isLast: (i == AVAILABLE_GENRES.length - 1),
+                isSelected: (that.selectedGenre == genre)
+            });
+
+            $genres.append(view.render().el);
+        });
+
+        return this;
+    }
+});
+
+Mixtress.View.NavigationEntryView = Backbone.View.extend({
+    tagName: 'li',
+    className: 'genre',
+    initialize: function(options) {
+        _.bindAll(this, 'render');
+        this.template = _.template($('#navigation-entry-template').html());
+        this.genre = options.genre;
+        this.isLast = options.isLast;
+        this.isSelected = options.isSelected;
+    },
+    render: function() {
+        var title = this.genre.charAt(0).toUpperCase() + this.genre.substring(1).toLowerCase();
+        var separator = this.isLast ? "" : "/";
+        var classes = this.isSelected ? "selected" : "";
+        $(this.el).html(this.template({
+            genre: this.genre,
+            title: title,
+            separator: separator,
+            classes: classes
+        }));
+        return this;
+    },
+});
+
+
 
 $(Mixtress.initialize);

@@ -45,33 +45,34 @@ ul {
 
 ul.genres {
     text-align: center;
-    color: #efefef;
 }
 
 ul.genres li {
-    color: #a0a0a0;
     display: inline-block;
-    margin: 5px 15px;
+    margin: 5px 0px;
+}
+
+ul.genres li.genre a {
+    display: inline-block;
+    margin: 0px 15px;
+    color: #a0a0a0;
+    text-decoration: none;
     padding-bottom: 1px;
     border-bottom: 1px solid transparent;
 }
 
-ul.genres li.selected {
+ul.genres li.genre a.selected {
     font-weight: bold;
     color: #000;
     border-bottom: 1px solid #000;
 }
 
-ul.genres li:hover {
+ul.genres li a:hover {
     border-bottom: 1px solid #a0a0a0;
-    cursor: pointer;
 }
 
-ul.genres li i {
-    padding-right: 3px;
-    font-style: normal;
-    font-size: 15px;
-    display: none;
+ul.genres li span.separator {
+    color: #efefef;
 }
 
 ul.mixes li {

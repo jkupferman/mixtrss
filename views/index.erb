@@ -36,14 +36,7 @@
         <h1>Mixtress</h1>
       </a>
     </div>
-    <div id="nav">
-      <ul class="genres">
-        <% @genres.each do |g| %>
-          <li data-genre="<%= g %>"><%= g.capitalize %></li>
-          <%= "/" unless g == @genres.last %>
-        <% end %>
-      </ul>
-    </div>
+    <div id="navigation"></div>
     <div id="container"></div>
 
     <script id="mix-template" type="text/template">
@@ -57,6 +50,19 @@
       <ul class="mixes">
       </ul>
     </script>
+
+    <script id="navigation-template" type="text/template">
+      <ul class="genres">
+      </ul>
+    </script>
+
+    <script id="navigation-entry-template" type="text/template">
+      <a href="/{{genre}}/0" class="{{ classes }}">
+        {{ title }}
+      </a>
+      <span class="separator">{{ separator }}</span>
+    </script>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
