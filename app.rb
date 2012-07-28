@@ -12,10 +12,10 @@ set :cache, Dalli::Client.new
 SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")["id"]
 
 FETCH_PAGE_SIZE = 200
-PAGE_FETCH_COUNT = 20
+PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
 
-AVAILABLE_GENRES = ["bass", "dance", "deep", "dubstep",
+AVAILABLE_GENRES = ["all", "bass", "dance", "deep", "dubstep",
                     "electronic", "house", "mashup",
                     "progressive", "techno", "trance"]
 
@@ -73,7 +73,6 @@ def tracks(genre, force=false)
     PAGE_FETCH_COUNT.times do |i|
       puts "Requesting #{genre} #{FETCH_PAGE_SIZE} #{i*FETCH_PAGE_SIZE}"
       params = {
-        :genres => genre,
         :duration => {
           :from => 1200000  # mixes must be a least 20 minutes
         },
@@ -81,16 +80,41 @@ def tracks(genre, force=false)
         :limit => FETCH_PAGE_SIZE,
         :offset => i * FETCH_PAGE_SIZE
       }
+      params[:genres] = genre unless genre == "all"
+
       page_key = "page/" + params.map { |k, v| "#{k}=#{v}" }.sort.join(',')
       tracks = client.get("/tracks", params).to_a.reject { |t| t.nil? }
       if tracks && tracks.any?
-        mixes.concat(tracks)
+        mixes.concat(tracks.select { |t| is_mix? t })
       else
         break # we've reached the end of that genre
       end
     end
     mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100].map { |e| { :uri => e['uri'], :score => freshness(e) } }
   end
+end
+
+def is_mix? track
+  # Given a track this function does its best to determine if it's actually
+  # a music mix (instead of say a gaming podcast or interview)
+  return false unless track
+
+  type = track['track_type'].to_s.downcase
+  return false if ["spoken"].include? type
+
+  # filter out some known non-music accounts
+  userid = (track['user'] || {})['id'].to_s
+  return false if ["15772169", "16890685", "8211472"].include? userid
+
+  genre = track['genre'].to_s.downcase
+  return false if ["comedy", "film", "criatividade", "humor", "sport"].include? genre
+
+  tags = track['tag_list'].to_s.downcase
+  ["empire podcast", "comedy", "humor", "game"].each do |tag|
+    return false if tags.include? tag
+  end
+
+  true
 end
 
 def freshness track
