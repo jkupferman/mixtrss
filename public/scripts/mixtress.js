@@ -202,7 +202,7 @@ Mixtress.View.PaginationView = Backbone.View.extend({
         return this;
     },
     navigate: function() {
-        $('body').animate({scrollTop: 0});
+        $('body,html').animate({scrollTop: 0});
     }
 });
 
