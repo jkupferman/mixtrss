@@ -61,7 +61,7 @@ post "/contact" do
   redirect '/'
 end
 
-def tracks(genre, force=false)
+def tracks(genre, force=false, cache={})
   # returns the top 100 tracks for the provided genre, sorted by freshness
   puts "Fetching #{genre}"
   genre_key = "topgenretracks/#{genre}"
@@ -82,9 +82,13 @@ def tracks(genre, force=false)
       }
       params[:genres] = genre unless genre == "all"
 
-      tracks = client.get("/tracks", params).to_a.reject { |t| t.nil? }
+      page_key = "page/#{params}"
+
+      tracks = cache[page_key] || client.get("/tracks", params).to_a.reject { |t| t.nil? }
       if tracks && tracks.any?
-        mixes.concat(tracks.select { |t| is_mix? t })
+        tracks.select! { |t| is_mix? t }
+        cache[page_key] = tracks
+        mixes.concat(tracks)
       else
         break # we've reached the end of that genre
       end
