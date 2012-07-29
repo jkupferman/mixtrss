@@ -40,7 +40,7 @@
     <div id="pagination"></div>
 
     <div id="footer">
-      <a href="http://twitter.com/jkupferman" target="_blank" class="twitter" title="Mixtrss Creator Twitter">@jkupferman</a>
+      <a href="http://twitter.com/jkupferman" target="_blank" class="twitter" title="Mixtrss Creator Twitter" onClick="_gaq.push(['_trackPageview', 'twitter']);">@jkupferman</a>
       <span class="separator"> / </span>
       <a class="about" title="Mixtrss About Page">About</a>
       <span class="separator"> / </span>
@@ -90,8 +90,14 @@
     <script src="/scripts/jquery.simplemodal.js"></script>
     <script type="text/javascript">
       $(function() {
-        $('#footer a.about').click(function() { $('#about').modal(); });
-        $('#footer a.contact').click(function() { $('#contact').modal(); });
+        $('#footer a.about').click(function() {
+          $('#about').modal();
+          _gaq.push(['_trackPageview', 'about']);
+        });
+        $('#footer a.contact').click(function() {
+          $('#contact').modal();
+          _gaq.push(['_trackPageview', 'contact']);
+        });
       });
     </script>
 
