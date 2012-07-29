@@ -12,7 +12,7 @@ set :cache, Dalli::Client.new
 SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")["id"]
 
 FETCH_PAGE_SIZE = 200
-PAGE_FETCH_COUNT = 40
+PAGE_FETCH_COUNT = 20
 RETURN_PAGE_SIZE = 10
 
 AVAILABLE_GENRES = ["all", "bass", "dance", "deep", "dubstep",
@@ -69,8 +69,11 @@ def tracks(genre, force=false, page_cache={})
   settings.cache.fetch(genre_key) do
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
 
+    # Have all fetch significantly more since it has a lot more non-mixes
+    pages_to_fetch = genre == "all" ? PAGE_FETCH_COUNT * 2 : PAGE_FETCH_COUNT
+
     mixes = []
-    PAGE_FETCH_COUNT.times do |i|
+    pages_to_fetch.times do |i|
       puts "Requesting #{genre} #{FETCH_PAGE_SIZE} #{i*FETCH_PAGE_SIZE}"
       params = {
         :duration => {
