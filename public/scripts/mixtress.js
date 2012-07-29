@@ -194,9 +194,9 @@ Mixtress.View.PaginationView = Backbone.View.extend({
         $(this.el).html(this.template({
             genre: this.selectedGenre,
             previousPage: this.selectedPage - 1,
-            previousClasses: this.selectedPage == 0 ? "hidden" : "",
+            previousClasses: this.selectedPage <= 0 ? "hidden" : "",
             nextPage: this.selectedPage + 1,
-            nextClasses: this.selectedPage == 9 ? "hidden" : ""
+            nextClasses: this.selectedPage >= 9 ? "hidden" : ""
         }));
 
         return this;
