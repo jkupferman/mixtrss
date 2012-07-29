@@ -46,7 +46,10 @@
     </div>
 
     <script id="mix-template" type="text/template">
-      <iframe width="100%" height="166" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url={{ uri }}&show_artwork=true&show_comments=false"></iframe>
+      <iframe width="100%" height="166" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url={{ uri }}&show_artwork=true&show_comments=false" title="{{ title }}"></iframe>
+      <span class="hidden">
+        {{ title }}
+      </span>
     </script>
 
     <script id="mixes-template" type="text/template">
