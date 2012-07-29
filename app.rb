@@ -31,7 +31,7 @@ get "/mixes/:genres/?:page?" do
   genres = AVAILABLE_GENRES if genres.empty?
 
   page = (params[:page] || 0).to_i
-  page = 0 if page < 0 || page > 10
+  return [].to_json if page < 0 || page > 10
 
   combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
 
@@ -89,7 +89,9 @@ def tracks(genre, force=false)
         break # we've reached the end of that genre
       end
     end
-    mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100].map { |e| { :uri => e['uri'], :score => freshness(e) } }
+    top_mixes = mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100]
+    # filter out any extraneous data so the key will fit in memcached
+    top_mixes.map { |e| { :uri => e['uri'], :score => freshness(e), :title => e['title'] } }
   end
 end
 
