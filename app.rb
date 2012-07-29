@@ -61,7 +61,7 @@ post "/contact" do
   redirect '/'
 end
 
-def tracks(genre, force=false, cache={})
+def tracks(genre, force=false, page_cache={})
   # returns the top 100 tracks for the provided genre, sorted by freshness
   puts "Fetching #{genre}"
   genre_key = "topgenretracks/#{genre}"
@@ -84,10 +84,16 @@ def tracks(genre, force=false, cache={})
 
       page_key = "page/#{params}"
 
-      tracks = cache[page_key] || client.get("/tracks", params).to_a.reject { |t| t.nil? }
+      begin
+        tracks = page_cache[page_key] || client.get("/tracks", params).to_a.reject { |t| t.nil? }
+      rescue Crack::ParseError
+        # TODO: Why are these happening?
+        puts "ParseError! #{genre} #{params}"
+        tracks = []
+      end
       if tracks && tracks.any?
         tracks.select! { |t| is_mix? t }
-        cache[page_key] = tracks
+        page_cache[page_key] = tracks
         mixes.concat(tracks)
       else
         break # we've reached the end of that genre
