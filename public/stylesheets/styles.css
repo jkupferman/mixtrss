@@ -70,6 +70,7 @@ ul.genres li.genre a {
 
 ul.genres li.genre a.selected {
     font-weight: bold;
+    margin: 0 14px;
 }
 
 ul.mixes li {
