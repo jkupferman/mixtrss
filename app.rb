@@ -118,10 +118,10 @@ def is_mix? track
 
   # filter out some known non-music accounts
   userid = (track['user'] || {})['id'].to_s
-  return false if ["15772169", "16890685", "8211472", "8717773", "21184161", "8396105", "19810996", "22244447", "13939351", "22234834", "20023000", "22343246", "15559691", "5170489"].include? userid
+  return false if ["15772169", "16890685", "8211472", "8717773", "21184161", "8396105", "19810996", "22244447", "13939351", "22234834", "20023000", "22343246", "15559691", "5170489", "13881787", "8937813", "2604591", "7077355", "10965205"].include? userid
 
   genre = track['genre'].to_s.downcase
-  return false if ["comedy", "film", "criatividade", "humor", "sport", "comedia", "morning show", "technology"].include? genre
+  return false if ["comedy", "film", "criatividade", "humor", "sport", "comedia", "morning show", "technology", "interview"].include? genre
 
   tags = track['tag_list'].to_s.downcase
   ["empire podcast", "comedy", "humor", "game", "edgefiles"].each do |tag|
