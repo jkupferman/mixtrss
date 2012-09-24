@@ -26,8 +26,8 @@ end
 
 get "/mixes/:genres/?:page?" do
   genres = params[:genres].to_s.strip.downcase
-  genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }
   # make sure no one is passing in any crazy genres
+  genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }
   genres = AVAILABLE_GENRES if genres.empty?
 
   page = (params[:page] || 0).to_i

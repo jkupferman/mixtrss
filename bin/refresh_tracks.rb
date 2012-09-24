@@ -9,7 +9,8 @@ threads = []
 AVAILABLE_GENRES.each do |genre|
   threads << Thread.new do |t|
     attempts = 0
-    cache = {} # per-thread cache so we don't re-fetch pages when failure occur
+    cache = {} # per-thread cache so we don't re-fetch pages when a failure occurs
+    sleep(rand() * 5) # stagger start times so we don't get 503'd right away
     begin
       attempts += 1
       puts "Getting #{genre} attempt #{attempts}"
