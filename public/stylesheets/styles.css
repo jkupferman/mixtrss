@@ -97,7 +97,7 @@ section.pagination a.next {
 }
 
 #about h2, #contact h2 {
-    margin: 0;
+    margin: 5px 10px;
     font-size: 2em;
 }
 
@@ -108,7 +108,7 @@ section.pagination a.next {
 #about div {
     font-size: 1.1em;
     line-height: 1.2em;
-    padding-bottom: 5px;
+    padding-bottom: 20px;
 }
 
 #contact form {
