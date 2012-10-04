@@ -10,6 +10,7 @@ require "yaml"
 set :cache, Dalli::Client.new
 
 SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")["id"]
+BLACKLIST = YAML.load_file("config/blacklist.yml")['blacklist']
 
 FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 20
@@ -114,17 +115,17 @@ def is_mix? track
   return false unless track
 
   type = track['track_type'].to_s.downcase
-  return false if ["spoken"].include? type
+  return false if BLACKLIST['track_type'].include? type
 
   # filter out some known non-music accounts
-  userid = (track['user'] || {})['id'].to_s
-  return false if ["15772169", "16890685", "8211472", "8717773", "21184161", "8396105", "19810996", "22244447", "13939351", "22234834", "20023000", "22343246", "15559691", "5170489", "13881787", "8937813", "2604591", "7077355", "10965205", "23221241", "22314338", "18334213", "917197", "20626177", "10372550", "17601677", "80007", "22734668", "4387582"].include? userid
+  userid = (track['user'] || {})['id']
+  return false if userid && BLACKLIST['userid'].include?(userid.to_i)
 
   genre = track['genre'].to_s.downcase
-  return false if ["comedy", "film", "criatividade", "humor", "sport", "comedia", "morning show", "technology", "interview", "spoken", "tech", "mma", "myo", "science", "hardtekk", "quran", "news"].include? genre
+  return false if BLACKLIST['genre'].include? genre
 
   tags = track['tag_list'].to_s.downcase
-  ["empire podcast", "comedy", "humor", "game", "edgefiles"].each do |tag|
+  BLACKLIST['tag'].each do |tag|
     return false if tags.include? tag
   end
 
