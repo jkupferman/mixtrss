@@ -118,10 +118,10 @@ def is_mix? track
 
   # filter out some known non-music accounts
   userid = (track['user'] || {})['id'].to_s
-  return false if ["15772169", "16890685", "8211472", "8717773", "21184161", "8396105", "19810996", "22244447", "13939351", "22234834", "20023000", "22343246", "15559691", "5170489", "13881787", "8937813", "2604591", "7077355", "10965205", "23221241", "22314338", "18334213", "917197", "20626177", "10372550"].include? userid
+  return false if ["15772169", "16890685", "8211472", "8717773", "21184161", "8396105", "19810996", "22244447", "13939351", "22234834", "20023000", "22343246", "15559691", "5170489", "13881787", "8937813", "2604591", "7077355", "10965205", "23221241", "22314338", "18334213", "917197", "20626177", "10372550", "17601677", "80007", "22734668", "4387582"].include? userid
 
   genre = track['genre'].to_s.downcase
-  return false if ["comedy", "film", "criatividade", "humor", "sport", "comedia", "morning show", "technology", "interview", "spoken", "tech", "mma", "myo"].include? genre
+  return false if ["comedy", "film", "criatividade", "humor", "sport", "comedia", "morning show", "technology", "interview", "spoken", "tech", "mma", "myo", "science", "hardtekk", "quran", "news"].include? genre
 
   tags = track['tag_list'].to_s.downcase
   ["empire podcast", "comedy", "humor", "game", "edgefiles"].each do |tag|
@@ -129,6 +129,10 @@ def is_mix? track
   end
 
   true
+end
+
+def extract_tags track
+  track['tag_list'].scan(/"([^"]*)"|(\w+)/).flatten.select {|t| t }
 end
 
 def freshness track
