@@ -109,6 +109,7 @@ section.pagination a.next {
     font-size: 1.1em;
     line-height: 1.2em;
     padding-bottom: 20px;
+    margin: 10px;
 }
 
 #contact form {
