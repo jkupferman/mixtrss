@@ -53,7 +53,7 @@
       <span class="separator"> / </span>
       <a class="about" title="Mixtrss About Page">About</a>
       <span class="separator"> / </span>
-      <a class="contact" title="Mixtrss Contact Page">Contact</a>
+      <a class="feedback" title="Mixtrss Feedback Page">Feedback</a>
       <span class="separator"> / </span>
       <a class="githtub" title="Mixtrss Github" href="http://github.com/jkupferman/mixtrss" target="_blank">Github</a>
     </div>
@@ -113,9 +113,9 @@
           $('#about').modal();
           _gaq.push(['_trackPageview', 'about']);
         });
-        $('#footer a.contact').click(function() {
-          $('#contact').modal();
-          _gaq.push(['_trackPageview', 'contact']);
+        $('#footer a.feedback').click(function() {
+          $('#feedback').modal();
+          _gaq.push(['_trackPageview', 'feedback']);
         });
 
         // bring in the share button after everything else
@@ -136,9 +136,9 @@
       </div>
     </div>
 
-    <div id="contact" style="display: none">
-      <h2>Contact</h2>
-      <form action="/contact" method="post">
+    <div id="feedback" style="display: none">
+      <h2>Feedback</h2>
+      <form action="/feedback" method="post">
         <label for="name">Name:</label>
         <input type="text" name="name">
         <label for="email">Email:</label>

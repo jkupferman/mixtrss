@@ -102,13 +102,13 @@ section.pagination a.next {
     padding: 5px 0 100px 0;
 }
 
-#about h2, #contact h2 {
-    margin: 5px 10px;
+#about h2, #feedback h2 {
+    margin: 5px 10px 5px 0;
     font-size: 2em;
 }
 
 #about h2 {
-    margin-bottom: 10px;
+    margin-left: 10px;
 }
 
 #about div {
@@ -118,26 +118,26 @@ section.pagination a.next {
     margin: 10px;
 }
 
-#contact form {
+#feedback form {
     font-size: 1.2em;
 }
 
-#contact label {
+#feedback label {
     display: block;
     padding-top: 7px;
 }
 
-#contact input {
+#feedback input {
     display: block;
     width: 300px;
 }
 
-#contact input, #contact textarea {
+#feedback input, #feedback textarea {
     border: 2px solid #EFEFEF;
     padding: 3px;
 }
 
-#contact input[type=submit] {
+#feedback input[type=submit] {
     background-color: #EFEFEF;
     border: 2px solid #AFAFAF;
     width: 120px;

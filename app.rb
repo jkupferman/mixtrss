@@ -42,11 +42,11 @@ get "/mixes/:genres/?:page?" do
   ordered_mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end
 
-post "/contact" do
+post "/feedback" do
   require 'pony'
   Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
             :to => 'jmkupferman+mixtress' + '@' + 'gmail.com',
-            :subject => "Mixtress contact from #{params[:name]}",
+            :subject => "Mixtress feedback from #{params[:name]}",
             :body => params[:message],
             :port => '587',
             :via => :smtp,
