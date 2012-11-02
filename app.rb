@@ -84,7 +84,7 @@ def tracks(genre, force=false, page_cache={})
         :limit => FETCH_PAGE_SIZE,
         :offset => i * FETCH_PAGE_SIZE
       }
-      params[:genre] = genre unless genre == "all"
+      params[:genres] = genre unless genre == "all"
 
       page_key = "page/#{params}"
 
