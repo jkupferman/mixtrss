@@ -25,7 +25,7 @@ get "/" do
   erb :index
 end
 
-get "/mixes/:genres/?:page?" do
+get "/mixes/:genres/:page" do
   genres = params[:genres].to_s.strip.downcase
   # make sure no one is passing in any crazy genres
   genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }

@@ -94,8 +94,8 @@ Mixtress.Collection.Mixes = Backbone.Collection.extend({
 Mixtress.View.MixView = Backbone.View.extend({
     tagName: 'li',
     className: 'mix',
+    template: _.template($('#mix-template').html()),
     initialize: function() {
-        this.template = _.template($('#mix-template').html());
     },
     render: function() {
         $(this.el).html(this.template(this.model.toJSON()));
@@ -106,9 +106,9 @@ Mixtress.View.MixView = Backbone.View.extend({
 Mixtress.View.MixesView = Backbone.View.extend({
     tagName: 'section',
     className: 'container',
+    template: _.template($('#mixes-template').html()),
     initialize: function() {
         _.bindAll(this, 'render');
-        this.template = _.template($('#mixes-template').html());
         this.collection.bind('reset', this.render);
     },
     render: function() {
@@ -130,9 +130,9 @@ Mixtress.View.MixesView = Backbone.View.extend({
 Mixtress.View.NavigationView = Backbone.View.extend({
     tagName: 'section',
     className: 'navigation',
+    template: _.template($('#navigation-template').html()),
     initialize: function(options) {
         _.bindAll(this, 'render');
-        this.template = _.template($('#navigation-template').html());
         this.selectedGenre = options.genre;
     },
     render: function() {
@@ -157,9 +157,9 @@ Mixtress.View.NavigationView = Backbone.View.extend({
 Mixtress.View.NavigationEntryView = Backbone.View.extend({
     tagName: 'li',
     className: 'genre',
+    template: _.template($('#navigation-entry-template').html()),
     initialize: function(options) {
         _.bindAll(this, 'render');
-        this.template = _.template($('#navigation-entry-template').html());
         this.genre = options.genre;
         this.isLast = options.isLast;
         this.isSelected = options.isSelected;
@@ -181,12 +181,12 @@ Mixtress.View.NavigationEntryView = Backbone.View.extend({
 Mixtress.View.PaginationView = Backbone.View.extend({
     tagName: 'section',
     className: 'pagination',
+    template: _.template($('#pagination-template').html()),
     events: {
         'click a': 'navigate'
     },
     initialize: function(options) {
         _.bindAll(this, 'render');
-        this.template = _.template($('#pagination-template').html());
         this.selectedGenre = options.genre;
         this.selectedPage = parseInt(options.page);
     },
