@@ -113,7 +113,7 @@ Mixtress.View.MixesView = Backbone.View.extend({
     },
     render: function() {
         var collection = this.collection;
-        $(this.el).html(this.template({}));
+        this.$el.html(this.template({}));
 
         var $mixes = this.$('.mixes');
         collection.each(function(mix, i) {
@@ -137,7 +137,7 @@ Mixtress.View.NavigationView = Backbone.View.extend({
     },
     render: function() {
         var that = this;
-        $(this.el).html(this.template({}));
+        this.$el.html(this.template({}));
 
         var $genres = this.$('.genres');
         _(AVAILABLE_GENRES).each(function(genre, i) {
@@ -168,7 +168,7 @@ Mixtress.View.NavigationEntryView = Backbone.View.extend({
         var title = this.genre.charAt(0).toUpperCase() + this.genre.substring(1).toLowerCase();
         var separator = this.isLast ? "" : "/";
         var classes = this.isSelected ? "selected" : "";
-        $(this.el).html(this.template({
+        this.$el.html(this.template({
             genre: this.genre,
             title: title,
             separator: separator,
@@ -191,7 +191,7 @@ Mixtress.View.PaginationView = Backbone.View.extend({
         this.selectedPage = parseInt(options.page);
     },
     render: function() {
-        $(this.el).html(this.template({
+        this.$el.html(this.template({
             genre: this.selectedGenre,
             previousPage: this.selectedPage - 1,
             previousClasses: this.selectedPage <= 0 ? "hidden" : "",
