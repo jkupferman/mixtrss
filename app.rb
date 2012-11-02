@@ -32,7 +32,6 @@ get "/mixes/:genres/:page" do
   genres = AVAILABLE_GENRES if genres.empty?
 
   page = (params[:page] || 0).to_i
-  return [].to_json if page < 0 || page > 10
 
   combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
 

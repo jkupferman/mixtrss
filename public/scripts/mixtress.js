@@ -45,8 +45,9 @@ var Mixtress = new Backbone.Application({
 
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
                 Mixtress.views.mixesView = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
-                Mixtress.collections.mixes.fetch();
-                Mixtress.views.mixesView.render();
+                Mixtress.collections.mixes.fetch({success: function() {
+                    Mixtress.views.mixesView.render();
+                }});
 
                 _gaq.push(['_trackPageview', Backbone.history.fragment]);
             },
@@ -111,16 +112,20 @@ Mixtress.View.MixesView = Backbone.View.extend({
     render: function() {
         var collection = this.collection;
         this.$('iframe').remove(); // clear out all the iframes for good measure
-        this.$el.empty().html(this.template({}));
+        this.$el.html(this.template({}));
 
-        var $mixes = this.$('.mixes');
-        collection.each(function(mix, i) {
-            var view = new Mixtress.View.MixView({
-                model: mix,
-                collection: collection
+        if(collection.length) {
+            var $mixes = this.$('.mixes');
+            collection.each(function(mix, i) {
+                var view = new Mixtress.View.MixView({
+                    model: mix,
+                    collection: collection
+                });
+                $mixes.append(view.render().el);
             });
-            $mixes.append(view.render().el);
-        });
+        } else {
+            this.$el.html(_.template($('#empty-mixes-template').html()));
+        }
         return this;
     }
 });

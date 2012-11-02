@@ -79,12 +79,16 @@ ul.genres li.genre a.selected {
     margin: 0 14px;
 }
 
+ul.mixes {
+    min-height: 2006px;
+}
+
 ul.mixes li {
     padding: 10px 0 20px;
 }
 
 #container {
-    min-height: 2006px;
+    min-height: 200px;
     padding-bottom: 20px;
 }
 
@@ -142,6 +146,12 @@ ul.mixes li {
     border: 2px solid #AFAFAF;
     width: 120px;
     margin-left: 2px;
+}
+
+.nomixes {
+    color: #A0A0A0;
+    text-align: center;
+    padding-top: 80px;
 }
 
 .hidden {
