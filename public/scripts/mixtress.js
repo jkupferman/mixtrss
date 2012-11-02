@@ -37,16 +37,16 @@ var Mixtress = new Backbone.Application({
             mixes: function(genre, page) {
                 console.log("MIXES CALLED:", genre, page);
 
-                Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre});
-                Mixtress.views.navigationview.render();
+                Mixtress.views.navigationView = new Mixtress.View.NavigationView({genre: genre});
+                Mixtress.views.navigationView.render();
 
-                Mixtress.views.paginationview = new Mixtress.View.PaginationView({genre: genre, page: page});
-                Mixtress.views.paginationview.render();
+                Mixtress.views.paginationView = new Mixtress.View.PaginationView({genre: genre, page: page});
+                Mixtress.views.paginationView.render();
 
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
-                Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
+                Mixtress.views.mixesView = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
                 Mixtress.collections.mixes.fetch();
-                Mixtress.views.mixesview.render();
+                Mixtress.views.mixesView.render();
 
                 _gaq.push(['_trackPageview', Backbone.history.fragment]);
             },
