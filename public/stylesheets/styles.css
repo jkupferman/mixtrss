@@ -88,11 +88,11 @@ ul.mixes li {
     padding-bottom: 20px;
 }
 
-section.pagination {
+#pagination {
     padding-bottom: 40px;
 }
 
-section.pagination a.next {
+#pagination a.next {
     float: right;
 }
 

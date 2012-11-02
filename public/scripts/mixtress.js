@@ -38,17 +38,15 @@ var Mixtress = new Backbone.Application({
                 console.log("MIXES CALLED:", genre, page);
 
                 Mixtress.views.navigationview = new Mixtress.View.NavigationView({genre: genre});
-                $('#navigation').empty().append(Mixtress.views.navigationview.render().el);
+                Mixtress.views.navigationview.render();
 
                 Mixtress.views.paginationview = new Mixtress.View.PaginationView({genre: genre, page: page});
-                $('#pagination').empty().append(Mixtress.views.paginationview.render().el);
+                Mixtress.views.paginationview.render();
 
                 Mixtress.collections.mixes = new Mixtress.Collection.Mixes([], {genre: genre, page: page});
                 Mixtress.views.mixesview = new Mixtress.View.MixesView({collection: Mixtress.collections.mixes});
                 Mixtress.collections.mixes.fetch();
-
-                $('li.mix iframe').remove();  // clear out all the iframes for good measure
-                $('#container').empty().append(Mixtress.views.mixesview.render().el);
+                Mixtress.views.mixesview.render();
 
                 _gaq.push(['_trackPageview', Backbone.history.fragment]);
             },
@@ -104,8 +102,7 @@ Mixtress.View.MixView = Backbone.View.extend({
 });
 
 Mixtress.View.MixesView = Backbone.View.extend({
-    tagName: 'section',
-    className: 'container',
+    el: "#container",
     template: _.template($('#mixes-template').html()),
     initialize: function() {
         _.bindAll(this, 'render');
@@ -113,7 +110,8 @@ Mixtress.View.MixesView = Backbone.View.extend({
     },
     render: function() {
         var collection = this.collection;
-        this.$el.html(this.template({}));
+        this.$('iframe').remove(); // clear out all the iframes for good measure
+        this.$el.empty().html(this.template({}));
 
         var $mixes = this.$('.mixes');
         collection.each(function(mix, i) {
@@ -128,8 +126,7 @@ Mixtress.View.MixesView = Backbone.View.extend({
 });
 
 Mixtress.View.NavigationView = Backbone.View.extend({
-    tagName: 'section',
-    className: 'navigation',
+    el: '#navigation',
     template: _.template($('#navigation-template').html()),
     initialize: function(options) {
         _.bindAll(this, 'render');
@@ -137,7 +134,7 @@ Mixtress.View.NavigationView = Backbone.View.extend({
     },
     render: function() {
         var that = this;
-        this.$el.html(this.template({}));
+        this.$el.empty().html(this.template({}));
 
         var $genres = this.$('.genres');
         _(AVAILABLE_GENRES).each(function(genre, i) {
@@ -179,8 +176,7 @@ Mixtress.View.NavigationEntryView = Backbone.View.extend({
 });
 
 Mixtress.View.PaginationView = Backbone.View.extend({
-    tagName: 'section',
-    className: 'pagination',
+    el: "#pagination",
     template: _.template($('#pagination-template').html()),
     events: {
         'click a': 'navigate'
@@ -191,7 +187,7 @@ Mixtress.View.PaginationView = Backbone.View.extend({
         this.selectedPage = parseInt(options.page);
     },
     render: function() {
-        this.$el.html(this.template({
+        this.$el.empty().html(this.template({
             genre: this.selectedGenre,
             previousPage: this.selectedPage - 1,
             previousClasses: this.selectedPage <= 0 ? "hidden" : "",
