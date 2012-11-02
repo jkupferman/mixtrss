@@ -36,6 +36,8 @@ get "/mixes/:genres/:page" do
 
   combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
 
+  combined_mixes.select! { |m| m[:downloadable] } if params[:downloadable]
+
   ordered_mixes = combined_mixes.sort_by { |t| t[:score] }.reverse
 
   offset = page * RETURN_PAGE_SIZE
@@ -105,7 +107,7 @@ def tracks(genre, force=false, page_cache={})
     end
     top_mixes = mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100]
     # filter out any extraneous data so the key will fit in memcached
-    top_mixes.map { |e| { :uri => e['uri'], :score => freshness(e), :title => e['title'] } }
+    top_mixes.map { |e| { :uri => e['uri'], :score => freshness(e), :title => e['title'], :downloadable => e['downloadable'] } }
   end
 end
 
