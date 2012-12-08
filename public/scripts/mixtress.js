@@ -29,6 +29,13 @@ var Mixtress = new Backbone.Application({
                 ':genre/:page': 'mixes',
                 '*path': 'unknown'
             },
+            initialize: function() {
+                return this.bind('all', this.trackPageview);
+            },
+            trackPageview: function() {
+                var url = Backbone.history.getFragment();
+                _gaq.push(['_trackPageview', "/" + url]);
+            },
             home: function() {
                 console.log("CALLED INDEX");
                 // default the user to the first page of the "all" genre
