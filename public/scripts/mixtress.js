@@ -55,8 +55,6 @@ var Mixtress = new Backbone.Application({
                 Mixtress.collections.mixes.fetch({success: function() {
                     Mixtress.views.mixesView.render();
                 }});
-
-                _gaq.push(['_trackPageview', Backbone.history.fragment]);
             },
             unknown: function(path) {
                 console.log("CALLED UNKNOWN");
