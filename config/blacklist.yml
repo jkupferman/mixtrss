@@ -49,6 +49,8 @@ blacklist:
         - 13359686
         - 6369225
         - 6904072
+        - 14233892
+        - 13178752
     genre:
         - comedy
         - film
@@ -73,5 +75,8 @@ blacklist:
         - humor
         - game
         - edgefiles
+        - filmes
+        - film
+        - movies
     track_type:
         - spoken
