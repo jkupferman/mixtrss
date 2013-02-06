@@ -25,22 +25,18 @@ get "/" do
   erb :index
 end
 
-get "/mixes/:genres/:page" do
-  genres = params[:genres].to_s.strip.downcase
-  # make sure no one is passing in any crazy genres
-  genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }
-  genres = AVAILABLE_GENRES if genres.empty?
+get "/mixes/:genre/:page" do
+  content_type 'application/json'
+
+  genre = params[:genre].to_s.strip.downcase
+  genre = "all" unless AVAILABLE_GENRES.include?(genre)
 
   page = (params[:page] || 0).to_i
 
-  combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
-
-  combined_mixes.select! { |m| m[:downloadable] } if params[:downloadable]
-
-  ordered_mixes = combined_mixes.sort_by { |t| t[:score] }.reverse
+  mixes = tracks(genre).sort_by { |t| t[:score] }.reverse
 
   offset = page * RETURN_PAGE_SIZE
-  ordered_mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
+  mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end
 
 post "/feedback" do
