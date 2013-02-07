@@ -16,9 +16,10 @@ FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
 
-AVAILABLE_GENRES = ["all", "bass", "dance", "deep", "dnb", "dubstep",
-                    "electronic", "house", "mashup",
-                    "progressive", "techno", "trance"]
+AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
+                    "drum & bass", "dubstep",
+                    "electro", "house", "mashup",
+                    "techno", "trance", "trap"]
 
 get "/" do
   @genres = AVAILABLE_GENRES

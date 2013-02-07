@@ -2,8 +2,7 @@
 require "rubygems"
 require './app'
 
-forced = ARGV && ARGV[0].to_s.downcase() == 'force'
-puts "Refreshing tracks. Forced = #{forced}"
+puts "Refreshing tracks"
 
 refresh_tracks()
 
