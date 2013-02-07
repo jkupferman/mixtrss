@@ -59,7 +59,7 @@ end
 
 def mixes_for_genre genre
   # fetches the precomputed mixes from memcache
-  settings.cache.get(genre_key(genre))
+  settings.cache.get(genre_key(genre)) || []
 end
 
 def genre_key genre
