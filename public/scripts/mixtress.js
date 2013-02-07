@@ -102,6 +102,9 @@ Mixtress.View.MixView = Backbone.View.extend({
     initialize: function() {
     },
     render: function() {
+        if(this.model.get('title').indexOf('"') >= 0) {
+            this.model.set('title', this.model.get('title').replace('"', "'"));
+        }
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
     }
@@ -127,6 +130,26 @@ Mixtress.View.MixesView = Backbone.View.extend({
                     collection: collection
                 });
                 $mixes.append(view.render().el);
+            });
+
+            this.$('iframe').each(function() {
+                // add some event tracking to the SC player
+                var widget = SC.Widget(this);
+                var title = $(this).attr('title');
+
+                widget.bind(SC.Widget.Events.PLAY, function() {
+                    _gaq.push(['_trackEvent', 'play', 'start', title]);
+                    _gaq.push(['_trackEvent', 'play', 'genre', collection.genre]);
+                });
+
+                widget.bind(SC.Widget.Events.FINISHED, function() {
+                    _gaq.push(['_trackEvent', 'play', 'finished', title]);
+                });
+
+                widget.bind(SC.Widget.Events.PLAY_PROGRESS, _.throttle(function() {
+                    _gaq.push(['_trackEvent', 'play', 'playing', title, 1]);
+                }, 60000));
+
             });
         } else {
             this.$el.html(_.template($('#empty-mixes-template').html()));
