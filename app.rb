@@ -13,10 +13,10 @@ SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")[
 BLACKLIST = YAML.load_file("config/blacklist.yml")['blacklist']
 
 FETCH_PAGE_SIZE = 200
-PAGE_FETCH_COUNT = 20
+PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
 
-AVAILABLE_GENRES = ["all", "bass", "dance", "deep", "dubstep",
+AVAILABLE_GENRES = ["all", "bass", "dance", "deep", "dnb", "dubstep",
                     "electronic", "house", "mashup",
                     "progressive", "techno", "trance"]
 
@@ -25,22 +25,16 @@ get "/" do
   erb :index
 end
 
-get "/mixes/:genres/:page" do
-  genres = params[:genres].to_s.strip.downcase
-  # make sure no one is passing in any crazy genres
-  genres = genres.split(',').select { |g| AVAILABLE_GENRES.include?(g) }
-  genres = AVAILABLE_GENRES if genres.empty?
+get "/mixes/:genre/:page" do
+  content_type 'application/json'
+
+  genre = params[:genre].to_s.strip.downcase
+  genre = "all" unless AVAILABLE_GENRES.include?(genre)
 
   page = (params[:page] || 0).to_i
 
-  combined_mixes = genres.map { |genre| tracks(genre) }.flatten.uniq { |m| m[:uri] }
-
-  combined_mixes.select! { |m| m[:downloadable] } if params[:downloadable]
-
-  ordered_mixes = combined_mixes.sort_by { |t| t[:score] }.reverse
-
   offset = page * RETURN_PAGE_SIZE
-  ordered_mixes[offset...(offset + RETURN_PAGE_SIZE)].to_json
+  mixes_for_genre(genre)[offset...(offset + RETURN_PAGE_SIZE)].to_json
 end
 
 post "/feedback" do
@@ -63,50 +57,72 @@ post "/feedback" do
   redirect '/'
 end
 
-def tracks(genre, force=false, page_cache={})
-  # returns the top 100 tracks for the provided genre, sorted by freshness
-  puts "Fetching #{genre}"
-  genre_key = "topgenretracks/#{genre}"
-  settings.cache.delete(genre_key) if force
-  settings.cache.fetch(genre_key) do
+def mixes_for_genre genre
+  # fetches the precomputed mixes from memcache
+  settings.cache.get(genre_key(genre))
+end
+
+def genre_key genre
+  "toptracks/#{genre}"
+end
+
+def fetch_tracks page, genre=nil
+  puts "Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE}"
+  params = {
+    :duration => {
+      :from => 1200000  # mixes must be a least 20 minutes long
+    },
+    :order => "hotness",
+    :limit => FETCH_PAGE_SIZE,
+    :offset => page * FETCH_PAGE_SIZE
+  }
+
+  attempts = 0
+  begin
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
-
-    # Have all fetch significantly more since it has a lot more non-mixes
-    pages_to_fetch = genre == "all" ? PAGE_FETCH_COUNT * 2 : PAGE_FETCH_COUNT
-
-    mixes = []
-    pages_to_fetch.times do |i|
-      puts "Requesting #{genre} #{FETCH_PAGE_SIZE} #{i*FETCH_PAGE_SIZE}"
-      params = {
-        :duration => {
-          :from => 1200000  # mixes must be a least 20 minutes
-        },
-        :order => "hotness",
-        :limit => FETCH_PAGE_SIZE,
-        :offset => i * FETCH_PAGE_SIZE
-      }
-      params[:genres] = genre unless genre == "all"
-
-      page_key = "page/#{params}"
-
-      begin
-        tracks = page_cache[page_key] || client.get("/tracks", params).to_a.reject { |t| t.nil? }
-      rescue Crack::ParseError
-        # TODO: Why are these happening?
-        puts "ParseError! #{genre} #{params}"
-        tracks = []
-      end
-      if tracks && tracks.any?
-        tracks.select! { |t| is_mix? t }
-        page_cache[page_key] = tracks
-        mixes.concat(tracks)
-      else
-        break # we've reached the end of that genre
-      end
+    client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
+  rescue Soundcloud::ResponseError
+    puts "Soundcloud::ResponseError - #{e.response}"
+    sleep(1)
+    attempts += 1
+    if attempts < 20
+      retry
+    else
+      []
     end
-    top_mixes = mixes.flatten.sort_by { |t| freshness(t) }.reverse[0...100]
+  rescue Crack::ParseError
+    # TODO: Why are these happening?
+    puts "ParseError! #{params}"
+    []
+  end
+end
+
+def refresh_tracks
+  tracks = []
+  PAGE_FETCH_COUNT.times do |i|
+    tracks.concat(fetch_tracks(i))
+  end
+
+  tracks.each do |track|
+    # set the tags as a list on each track
+    track["tags"] = extract_tags(track) << track["genre"].to_s.downcase
+  end
+
+  AVAILABLE_GENRES.each do |genre|
+    filtered_tracks = tracks.uniq { |t| t['uri'] }
+    filtered_tracks = tracks.select { |t| t["tags"].include? genre } if genre != "all"
+
+    top_tracks = filtered_tracks.sort_by { |t| freshness(t) }.reverse[0...100]
     # filter out any extraneous data so the key will fit in memcached
-    top_mixes.map { |e| { :uri => e['uri'], :score => freshness(e), :title => e['title'], :downloadable => e['downloadable'] } }
+    result = top_tracks.map do |e|
+      { :uri => e['uri'],
+        :score => freshness(e),
+        :title => e['title'],
+        :downloadable => e['downloadable']
+      }
+    end
+    puts "Found #{result.length} tracks for #{genre}"
+    settings.cache.set(genre_key(genre), result)
   end
 end
 
@@ -134,7 +150,7 @@ def is_mix? track
 end
 
 def extract_tags track
-  track['tag_list'].scan(/"([^"]*)"|(\w+)/).flatten.select {|t| t }
+  track['tag_list'].to_s.downcase.scan(/"([^"]*)"|(\w+)/).flatten.select { |t| t }
 end
 
 def freshness track
