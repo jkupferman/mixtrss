@@ -67,7 +67,7 @@ def genre_key genre
   "toptracks/#{genre}"
 end
 
-def fetch_tracks page, genre=nil
+def fetch_tracks page
   puts "Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE}"
   params = {
     :duration => {
@@ -75,14 +75,14 @@ def fetch_tracks page, genre=nil
     },
     :order => "hotness",
     :limit => FETCH_PAGE_SIZE,
-    :offset => page * FETCH_PAGE_SIZE
+    :offset => page.to_i * FETCH_PAGE_SIZE
   }
 
   attempts = 0
   begin
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
     client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
-  rescue Soundcloud::ResponseError
+  rescue Soundcloud::ResponseError => e
     puts "Soundcloud::ResponseError - #{e.response}"
     sleep(1)
     attempts += 1
