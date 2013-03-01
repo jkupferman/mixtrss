@@ -142,7 +142,7 @@ Mixtress.View.MixesView = Backbone.View.extend({
                     _gaq.push(['_trackEvent', 'play', 'genre', collection.genre]);
                 });
 
-                widget.bind(SC.Widget.Events.FINISHED, function() {
+                widget.bind(SC.Widget.Events.FINISH, function() {
                     _gaq.push(['_trackEvent', 'play', 'finished', title]);
                 });
 
