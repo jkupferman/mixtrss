@@ -22,6 +22,9 @@ AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "techno", "trance", "trap"]
 
 get "/:genre?/?:page?" do
+  @genre = params[:genre].to_s.strip.downcase
+  @genre = "all" unless AVAILABLE_GENRES.include? @genre
+
   erb :index
 end
 
@@ -29,7 +32,7 @@ get "/mixes/:genre/:page" do
   content_type 'application/json'
 
   genre = params[:genre].to_s.strip.downcase
-  genre = "all" unless AVAILABLE_GENRES.include?(genre)
+  genre = "all" unless AVAILABLE_GENRES.include? genre
 
   page = (params[:page] || 0).to_i
 

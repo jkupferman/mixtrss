@@ -6,9 +6,9 @@
     <link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/images/ios-icon.png"/>
-    <link rel="canonical" href="http://mixtrss.com/<%= params[:genre] %>/<%= params[:page] %>"/>
+    <link rel="canonical" href="http://mixtrss.com/<%= @genre %>/<%= params[:page].to_i %>"/>
 
-    <meta content="Listen to the best <%= (params[:genre] && params[:genre] != 'all') ? params[:genre] : 'electro' %> mixes and dj sets from soundcloud" name="description" />
+    <meta content="Listen to the best <%= (@genre && @genre != 'all') ? @genre : 'electro' %> mixes and dj sets from soundcloud" name="description" />
     <% version = 13 %>
     <link href="/stylesheets/styles.css?v=<%= version %>" media="screen" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
