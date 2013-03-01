@@ -132,7 +132,8 @@ Mixtress.View.MixesView = Backbone.View.extend({
                 $mixes.append(view.render().el);
             });
 
-            this.$('iframe').each(function() {
+            var iframes = this.$('iframe');
+            iframes.each(function(i) {
                 // add some event tracking to the SC player
                 var widget = SC.Widget(this);
                 var title = $(this).attr('title');
@@ -144,6 +145,11 @@ Mixtress.View.MixesView = Backbone.View.extend({
 
                 widget.bind(SC.Widget.Events.FINISH, function() {
                     _gaq.push(['_trackEvent', 'play', 'finished', title]);
+                    // FIXME: This should be done at the individual mix level
+                    var nextMix = iframes[i + 1];
+                    if(nextMix) {
+                        SC.Widget(nextMix).play();
+                    }
                 });
 
                 widget.bind(SC.Widget.Events.PLAY_PROGRESS, _.throttle(function() {
