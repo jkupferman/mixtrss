@@ -21,8 +21,7 @@ AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "electro", "house", "mashup",
                     "techno", "trance", "trap"]
 
-get "/" do
-  @genres = AVAILABLE_GENRES
+get "/:genre?/?:page?" do
   erb :index
 end
 

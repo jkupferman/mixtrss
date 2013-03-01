@@ -64,7 +64,7 @@ var Mixtress = new Backbone.Application({
         });
         // Instantiate router
         Mixtress.router = new Mixtress.Router();
-        Backbone.history.start();
+        Backbone.history.start({pushState: true});
 
         // Bind all the links whose hrefs start with a / to call internal navigation
         $(document).on('click', "a[href^='/']", function(event) {
