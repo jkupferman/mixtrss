@@ -22,8 +22,10 @@ AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "techno", "trance", "trap"]
 
 get "/:genre?/?:page?" do
-  @genre = params[:genre].to_s.strip.downcase
-  @genre = "all" unless AVAILABLE_GENRES.include? @genre
+  genre, page = genre_and_page params[:genre], params[:page]
+  @mixes = mixes(genre, page)
+  @description = description @mixes, genre
+  @canonical = canonical genre, page
 
   erb :index
 end
@@ -31,13 +33,35 @@ end
 get "/mixes/:genre/:page" do
   content_type 'application/json'
 
-  genre = params[:genre].to_s.strip.downcase
-  genre = "all" unless AVAILABLE_GENRES.include? genre
+  genre, page = genre_and_page params[:genre], params[:page]
 
-  page = (params[:page] || 0).to_i
+  mixes(genre, page).to_json
+end
 
+def genre_and_page genre, page
+  # sanitize the incoming genre and page values to ensure they are valid
+  genre = genre.to_s.strip.downcase
+  genre = AVAILABLE_GENRES.include?(genre) ? genre : "all"
+
+  page = (page || 0).to_i
+
+  [genre, page]
+end
+
+def mixes genre, page
   offset = page * RETURN_PAGE_SIZE
-  mixes_for_genre(genre)[offset...(offset + RETURN_PAGE_SIZE)].to_json
+  mixes_for_genre(genre)[offset...(offset + RETURN_PAGE_SIZE)]
+end
+
+def description mixes, genre
+  artists = mixes.map { |m| m[:artist] }[0...4].join(", ")
+
+  display_genre = (genre == 'all') ? 'electro' : genre
+  "Listen to the best #{display_genre} mixes and dj sets on the webx. Hear mixes by #{artists}."
+end
+
+def canonical genre, page
+  "http://mixtrss.com/#{genre}/#{page}"
 end
 
 post "/feedback" do
@@ -121,6 +145,8 @@ def refresh_tracks
       { :uri => e['uri'],
         :score => freshness(e),
         :title => e['title'],
+        :permalink => e['permalink_url'],
+        :artist => e['user']['username'],
         :downloadable => e['downloadable']
       }
     end

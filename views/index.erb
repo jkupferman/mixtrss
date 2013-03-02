@@ -6,9 +6,9 @@
     <link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/images/ios-icon.png"/>
-    <link rel="canonical" href="http://mixtrss.com/<%= @genre %>/<%= params[:page].to_i %>"/>
+    <link rel="canonical" href="<%= @canonical %>"/>
 
-    <meta content="Listen to the best <%= (@genre && @genre != 'all') ? @genre : 'electro' %> mixes and dj sets from soundcloud" name="description" />
+    <meta content="<%= @description %>" name="description" />
     <% version = 13 %>
     <link href="/stylesheets/styles.css?v=<%= version %>" media="screen" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
@@ -58,6 +58,13 @@
       <span class="separator"> / </span>
       <a class="githtub" title="Mixtrss Github" href="http://github.com/jkupferman/mixtrss" target="_blank">Github</a>
     </div>
+
+    <ul style="position: absolute; left: -2000px;">
+      <!-- Put the mix information on the page so search engines can see it -->
+      <% @mixes.each do |mix| %>
+        <li>Listen to: <a href="<%= mix[:permalink] %>"><%= mix[:artist] %> - <%= mix[:title] %></a></li>
+      <% end %>
+    </ul>
 
     <script id="mix-template" type="text/template">
       <iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url={{ uri }}&show_artwork=true&show_comments=false&v=1" title="{{ title }}"></iframe>
