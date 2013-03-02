@@ -2,45 +2,61 @@
   <url>
     <loc>http://mixtrss.com/all/0</loc>
     <priority>1.0</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/bass/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/dance/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/deep/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>http://mixtrss.com/drum%20&%20/0</loc>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/dubstep/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>http://mixtrss.com/electronic/0</loc>
+    <loc>http://mixtrss.com/electro/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/house/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/mashup/0</loc>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://mixtrss.com/progressive/0</loc>
-    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/techno/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>http://mixtrss.com/trance/0</loc>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>http://mixtrss.com/trap/0</loc>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
 </urlset>

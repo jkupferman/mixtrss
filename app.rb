@@ -6,6 +6,7 @@ require "json"
 require "sinatra"
 require "soundcloud"
 require "yaml"
+require "open-uri"
 
 set :cache, Dalli::Client.new
 
@@ -61,7 +62,7 @@ def description mixes, genre
 end
 
 def canonical genre, page
-  "http://mixtrss.com/#{genre}/#{page}"
+  "http://mixtrss.com/#{URI::encode(genre)}/#{page}"
 end
 
 post "/feedback" do
