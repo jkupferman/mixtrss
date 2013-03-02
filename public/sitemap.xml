@@ -20,11 +20,6 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>http://mixtrss.com/drum%20&%20/0</loc>
-    <priority>0.8</priority>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
     <loc>http://mixtrss.com/dubstep/0</loc>
     <priority>0.8</priority>
     <changefreq>daily</changefreq>
