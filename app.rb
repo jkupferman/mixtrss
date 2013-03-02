@@ -93,8 +93,8 @@ def genre_key genre
   "toptracks/#{genre}"
 end
 
-def fetch_tracks page
-  puts "Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE}"
+def fetch_tracks page, genre=nil, tag=nil
+  puts "Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
   params = {
     :duration => {
       :from => 1200000  # mixes must be a least 20 minutes long
@@ -103,13 +103,15 @@ def fetch_tracks page
     :limit => FETCH_PAGE_SIZE,
     :offset => page.to_i * FETCH_PAGE_SIZE
   }
+  params[:genres] = genre if genre
+  params[:tags] = tag if tag
 
   attempts = 0
   begin
     client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
     client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
-  rescue Soundcloud::ResponseError => e
-    puts "Soundcloud::ResponseError - #{e.response}"
+  rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
+    puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
     sleep(1)
     attempts += 1
     if attempts < 20
@@ -126,18 +128,34 @@ end
 
 def refresh_tracks
   tracks = []
+  threads = []
   PAGE_FETCH_COUNT.times do |i|
-    tracks.concat(fetch_tracks(i))
+    AVAILABLE_GENRES.each do |genre|
+      threads << Thread.new do
+        # have each thread sleep for a bit to avoid stampeding the soundcloud api
+        sleep(rand() * 120)
+        if genre == "all"
+          tracks.concat(fetch_tracks(i))
+        elsif i < 10
+          # grab mixes for the specific genre to make sure fill them out
+          # only grab a few pages since most genres aren't very deep
+          tracks.concat(fetch_tracks(i, genre, nil))
+          tracks.concat(fetch_tracks(i, nil, genre))
+        end
+      end
+    end
   end
+  threads.each { |t| t.join }
+
+  tracks.uniq! { |t| t['uri'] }
 
   tracks.each do |track|
-    # set the tags as a list on each track
-    track["tags"] = extract_tags(track) << track["genre"].to_s.downcase
+    track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
   end
 
   AVAILABLE_GENRES.each do |genre|
-    filtered_tracks = tracks.uniq { |t| t['uri'] }
-    filtered_tracks = tracks.select { |t| t["tags"].include? genre } if genre != "all"
+    genre_regex = /\b#{genre}\b/
+    filtered_tracks = tracks.select { |t| genre == "all" || genre_regex =~ t["tags"] }
 
     top_tracks = filtered_tracks.sort_by { |t| freshness(t) }.reverse[0...100]
     # filter out any extraneous data so the key will fit in memcached
@@ -176,10 +194,6 @@ def is_mix? track
   end
 
   true
-end
-
-def extract_tags track
-  track['tag_list'].to_s.downcase.scan(/"([^"]*)"|(\w+)/).flatten.select { |t| t }
 end
 
 def freshness track
