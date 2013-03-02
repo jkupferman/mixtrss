@@ -242,3 +242,5 @@ Mixtress.View.PaginationView = Backbone.View.extend({
 });
 
 $(Mixtress.initialize);
+
+console.log("Like looking under the hood? Check out the code on github: https://github.com/jkupferman/mixtrss");
