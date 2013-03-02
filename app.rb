@@ -128,24 +128,18 @@ end
 
 def refresh_tracks
   tracks = []
-  threads = []
   PAGE_FETCH_COUNT.times do |i|
     AVAILABLE_GENRES.each do |genre|
-      threads << Thread.new do
-        # have each thread sleep for a bit to avoid stampeding the soundcloud api
-        sleep(rand() * 120)
-        if genre == "all"
-          tracks.concat(fetch_tracks(i))
-        elsif i < 10
-          # grab mixes for the specific genre to make sure fill them out
-          # only grab a few pages since most genres aren't very deep
-          tracks.concat(fetch_tracks(i, genre, nil))
-          tracks.concat(fetch_tracks(i, nil, genre))
-        end
+      if genre == "all"
+        tracks.concat(fetch_tracks(i))
+      elsif i < 10
+        # grab mixes for the specific genre to make sure fill them out
+        # only grab a few pages since most genres aren't very deep
+        tracks.concat(fetch_tracks(i, genre, nil))
+        tracks.concat(fetch_tracks(i, nil, genre))
       end
     end
   end
-  threads.each { |t| t.join }
 
   tracks.uniq! { |t| t['uri'] }
 
