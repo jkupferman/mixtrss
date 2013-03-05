@@ -166,7 +166,8 @@ def refresh_tracks
         :title => e['title'],
         :permalink => e['permalink_url'],
         :artist => e['user']['username'],
-        :downloadable => e['downloadable']
+        :downloadable => e['downloadable'],
+        :created_at => Time.parse(e['created_at']).getutc.iso8601
       }
     end
     puts "Found #{result.length} tracks for #{genre}"
