@@ -58,7 +58,7 @@ def description mixes, genre
   artists = mixes.map { |m| m[:artist] }[0...4].join(", ")
 
   display_genre = (genre == 'all') ? 'electro' : genre
-  "Listen to the best #{display_genre} mixes and dj sets on the webx. Hear mixes by #{artists}."
+  "Listen to the best #{display_genre} mixes and dj sets on the web. Hear mixes by #{artists}."
 end
 
 def canonical genre, page
