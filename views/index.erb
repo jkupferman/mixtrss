@@ -68,6 +68,14 @@
 
     <script id="mix-template" type="text/template">
       <iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url={{ uri }}&show_artwork=true&show_comments=false&v=1" title="{{ title }}"></iframe>
+      <div class="info">
+        <span>
+          Hotness: <span class="hotness h{{ hotnessFactor }}"> {{ hotnessName }}</span>
+        </span>
+        <span class="right">
+          Added <span class="created timeago" title="{{ created_at }}"></span>
+        </span>
+      </div>
       <span class="hidden">
         {{ title }}
       </span>
@@ -113,6 +121,7 @@
     <script src="/scripts/api.js"></script>
     <script src="/scripts/mixtress.js?v=<%= version %>"></script>
     <script src="/scripts/jquery.simplemodal.js"></script>
+    <script src="/scripts/jquery.timeago.js"></script>
     <script type="text/javascript">
      // Switch out the title since that is what addthis uses to generate share messages
      $('title').html('Mixtrss - Serving up the best dj mixes on the web ♫♪ #mixtrss');

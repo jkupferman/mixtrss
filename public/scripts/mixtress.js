@@ -81,6 +81,44 @@ Mixtress.Model.Mix = Backbone.Model.extend({
     defaults: {
         uri: '',
         score: 0
+    },
+    initialize: function() {
+        if(this.get('title').indexOf('"') >= 0) {
+            // get rid of any double quotes since those cause all sorts of issues
+            this.set('title', this.get('title').replace('"', "'"));
+        }
+        this.set('hotness', Math.ceil(this.get('score') / 100));
+        this.set('hotnessFactor', this.hotnessFactor());
+        this.set('hotnessName', this.hotnessName());
+    },
+    hotnessFactor: function() {
+        var hotness = this.get('hotness');
+        if(hotness > 2000)       { return 2000; }
+        else if (hotness > 1000) { return 1000; }
+        else if (hotness > 500)  { return 500;  }
+        else if (hotness > 250)  { return 250;  }
+        else if (hotness > 125)  { return 125;  }
+        else if (hotness > 80)   { return 80;   }
+        else if (hotness > 40)   { return 40;   }
+        else if (hotness > 20)   { return 20;   }
+        else if (hotness > 10)   { return 10;   }
+        else if (hotness > 5)    { return 5;    }
+        else if (hotness > 1)    { return 1;    }
+        else                     { return 0;    }
+    },
+    hotnessName: function() {
+        return {2000: "The Devil Himself",
+                1000: "Apocalypse",
+                500:  "Holy Moses",
+                250:  "El Scorcho",
+                125:  "Heating up",
+                80:   "Bonfire",
+                40:   "Campfire",
+                20:   "Fireplace",
+                10:   "Torch",
+                5:    "Lighter",
+                1:    "Match",
+                0:    "Cucumber"}[this.get('hotnessFactor')];
     }
 });
 
@@ -102,10 +140,8 @@ Mixtress.View.MixView = Backbone.View.extend({
     initialize: function() {
     },
     render: function() {
-        if(this.model.get('title').indexOf('"') >= 0) {
-            this.model.set('title', this.model.get('title').replace('"', "'"));
-        }
-        $(this.el).html(this.template(this.model.toJSON()));
+        this.$el.html(this.template(this.model.toJSON()));
+        this.$el.find('span.timeago').timeago();
         return this;
     }
 });

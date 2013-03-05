@@ -87,6 +87,25 @@ ul.mixes li {
     padding: 10px 0 20px;
 }
 
+ul.mixes div.info {
+    color: #A0A0A0;
+    font-size: 12px;
+}
+
+div.info span.hotness.h2000 { color: #ff0100; }
+div.info span.hotness.h1000 { color: #ff3100; }
+div.info span.hotness.h500  { color: #ff7300; }
+div.info span.hotness.h250  { color: #ff8c00; }
+div.info span.hotness.h125  { color: #ffa500; }
+div.info span.hotness.h80   { color: #ffac00; }
+div.info span.hotness.h40   { color: #ffc000; }
+div.info span.hotness.h20   { color: #ffee00; }
+div.info span.hotness.h10   { color: #ffd600; }
+div.info span.hotness.h5    { color: #fffc00; }
+div.info span.hotness.h1    { color: #fffd76; }
+div.info span.hotness.h0    { color: #7f89ff; }
+div.info span.hotness       { color: #7f89ff; }
+
 #container {
     min-height: 200px;
     padding-bottom: 20px;
@@ -154,6 +173,9 @@ ul.mixes li {
     padding-top: 80px;
 }
 
+.right {
+    float: right;
+}
 .hidden {
     display: none;
 }
