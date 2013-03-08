@@ -27,6 +27,7 @@ get "/:genre?/?:page?" do
   @mixes = mixes(genre, page)
   @description = description @mixes, genre
   @canonical = canonical genre, page
+  @title = title genre, page
 
   erb :index
 end
@@ -54,11 +55,19 @@ def mixes genre, page
   mixes_for_genre(genre)[offset...(offset + RETURN_PAGE_SIZE)]
 end
 
+def title genre, page
+  if genre == "all"
+    "Mixtrss - the best mixes on Soundcloud"
+  else
+    "#{genre.capitalize} mixes | Mixtrss"
+  end
+end
+
 def description mixes, genre
   artists = mixes.map { |m| m[:artist] }[0...4].join(", ")
 
   display_genre = (genre == 'all') ? 'electro' : genre
-  "Listen to the best #{display_genre} mixes and dj sets on the web. Hear mixes by #{artists}."
+  "Listen to the best #{display_genre} mixes and dj sets on the web. Mixes by #{artists}."
 end
 
 def canonical genre, page
