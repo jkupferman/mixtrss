@@ -92,19 +92,23 @@ ul.mixes div.info {
     font-size: 12px;
 }
 
-div.info span.hotness.h2000 { color: #ff0100; }
-div.info span.hotness.h1000 { color: #ff3100; }
-div.info span.hotness.h500  { color: #ff7300; }
-div.info span.hotness.h250  { color: #ff8c00; }
-div.info span.hotness.h125  { color: #ffa500; }
-div.info span.hotness.h80   { color: #ffac00; }
-div.info span.hotness.h40   { color: #ffc000; }
-div.info span.hotness.h20   { color: #ffee00; }
-div.info span.hotness.h10   { color: #ffd600; }
-div.info span.hotness.h5    { color: #fffc00; }
-div.info span.hotness.h1    { color: #fffd76; }
-div.info span.hotness.h0    { color: #7f89ff; }
-div.info span.hotness       { color: #7f89ff; }
+div.info div.meter {
+    background-image: url('/images/meter.png');
+    height: 15px;
+    margin-left: 2px;
+    display: inline-block;
+}
+
+div.info div.meter.h500 { width: 545px; }
+div.info div.meter.h250 { width: 475px; }
+div.info div.meter.h125 { width: 405px; }
+div.info div.meter.h80  { width: 340px; }
+div.info div.meter.h40  { width: 275px; }
+div.info div.meter.h20  { width: 205px; }
+div.info div.meter.h10  { width: 140px; }
+div.info div.meter.h5   { width: 70px;  }
+div.info div.meter.h1   { width: 35px;  }
+div.info div.meter.h0   { width: 0px;   }
 
 #container {
     min-height: 200px;
@@ -176,6 +180,7 @@ div.info span.hotness       { color: #7f89ff; }
 .right {
     float: right;
 }
+
 .hidden {
     display: none;
 }

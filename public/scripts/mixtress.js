@@ -93,9 +93,7 @@ Mixtress.Model.Mix = Backbone.Model.extend({
     },
     hotnessFactor: function() {
         var hotness = this.get('hotness');
-        if(hotness > 2000)       { return 2000; }
-        else if (hotness > 1000) { return 1000; }
-        else if (hotness > 500)  { return 500;  }
+        if (hotness > 500)       { return 500;  }
         else if (hotness > 250)  { return 250;  }
         else if (hotness > 125)  { return 125;  }
         else if (hotness > 80)   { return 80;   }
@@ -107,18 +105,15 @@ Mixtress.Model.Mix = Backbone.Model.extend({
         else                     { return 0;    }
     },
     hotnessName: function() {
-        return {2000: "The Devil Himself",
-                1000: "Apocalypse",
-                500:  "Holy Moses",
-                250:  "El Scorcho",
-                125:  "Heating up",
-                80:   "Bonfire",
-                40:   "Campfire",
-                20:   "Fireplace",
-                10:   "Torch",
-                5:    "Lighter",
-                1:    "Match",
-                0:    "Cucumber"}[this.get('hotnessFactor')];
+        return {500: "The Devil Himself",
+                250: "Apocalypse",
+                125: "Holy Moses",
+                80:  "Sweet Jesus",
+                40:  "El Scorcho",
+                20:  "Bonfire",
+                10:  "Campfire",
+                5:   "Fireplace",
+                1:   "Tiki Torch"}[this.get('hotnessFactor')];
     }
 });
 
