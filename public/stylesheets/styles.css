@@ -171,6 +171,10 @@ div.info div.meter.h0   { width: 0px;   }
     margin-left: 2px;
 }
 
+.addthis_toolbox a:hover {
+    border-bottom: 1px solid transparent;
+}
+
 .nomixes {
     color: #A0A0A0;
     text-align: center;
