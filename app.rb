@@ -9,6 +9,7 @@ require "yaml"
 require "open-uri"
 
 set :cache, Dalli::Client.new
+set :static_cache_control, [:public, max_age: 60 * 60 * 24 * 365]
 
 SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")["id"]
 BLACKLIST = YAML.load_file("config/blacklist.yml")['blacklist']
