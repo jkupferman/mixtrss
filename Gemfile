@@ -8,9 +8,16 @@ gem 'rake', '0.8.7'
 gem 'sinatra'
 gem 'shotgun'
 gem 'json'
-gem 'puma'
 gem 'dalli'
 gem 'soundcloud'
 gem 'pony'
 
 gem 'heroku'
+
+group :development do
+  gem 'thin'
+end
+
+group :production do
+  gem 'puma'
+end
