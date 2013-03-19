@@ -64,6 +64,8 @@ blacklist:
         - 21332328
         - 38831346
         - 23966929
+        - 6067357
+        - 25259300
     genre:
         - comedy
         - film
@@ -91,5 +93,6 @@ blacklist:
         - filmes
         - film
         - movies
+        - interview
     track_type:
         - spoken
