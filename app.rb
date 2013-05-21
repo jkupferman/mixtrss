@@ -105,7 +105,7 @@ def genre_key genre
 end
 
 def fetch_tracks page, genre=nil, tag=nil
-  puts "Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
+  puts "#{Time.now}: Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
   params = {
     :duration => {
       :from => 1200000  # mixes must be a least 20 minutes long
@@ -123,7 +123,7 @@ def fetch_tracks page, genre=nil, tag=nil
     client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
   rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
     puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
-    sleep(1)
+    sleep(attempts * 2)
     attempts += 1
     if attempts < 20
       retry
@@ -144,7 +144,7 @@ def refresh_tracks
     threads << Thread.new do
       PAGE_FETCH_COUNT.times do |i|
         # have each thread sleep for a bit to avoid stampeding the soundcloud api
-        sleep(rand() * 10)
+        sleep(rand() * 20)
         if genre == "all"
           tracks.concat(fetch_tracks(i))
         elsif i < 10
