@@ -123,8 +123,11 @@ def fetch_tracks page, genre=nil, tag=nil
     client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
   rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
     puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
-    sleep(attempts * 2)
+    if e.respond_to?(:message)
+      puts "Message: #{e.response.code} - #{e.message}"
+    end
     attempts += 1
+    sleep(attempts * 2)
     if attempts < 20
       retry
     else
