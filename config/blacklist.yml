@@ -127,6 +127,8 @@ blacklist:
         - 29341787
         - 44935588
         - 39505427
+        - 33711988
+        - 22045952
     genre:
         - comedy
         - film
@@ -145,6 +147,7 @@ blacklist:
         - hardtekk
         - quran
         - news
+        - talk radio
     tag:
         - empire podcast
         - comedy
