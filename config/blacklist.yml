@@ -140,6 +140,11 @@ blacklist:
         - 22176981
         - 40440599
         - 29135465
+        - 44199066
+        - 19610109
+        - 38405362
+        - 24953603
+        - 35855923
     genre:
         - comedy
         - film
@@ -159,6 +164,8 @@ blacklist:
         - quran
         - news
         - talk radio
+        - erotica
+        - sports
     tag:
         - empire podcast
         - comedy
@@ -169,5 +176,6 @@ blacklist:
         - film
         - movies
         - interview
+        - erotica
     track_type:
         - spoken
