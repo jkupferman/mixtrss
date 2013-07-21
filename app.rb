@@ -17,6 +17,7 @@ BLACKLIST = YAML.load_file("config/blacklist.yml")['blacklist']
 FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
+MINIMUM_TRACK_DURATION = 1200000
 
 AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "drum & bass", "dubstep",
@@ -108,7 +109,7 @@ def fetch_tracks page, genre=nil, tag=nil
   puts "#{Time.now}: Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
   params = {
     :duration => {
-      :from => 1200000  # mixes must be a least 20 minutes long
+      :from => MINIMUM_TRACK_DURATION
     },
     :order => "hotness",
     :limit => FETCH_PAGE_SIZE,
@@ -162,6 +163,10 @@ def refresh_tracks
   threads.each { |t| t.join }
 
   tracks.uniq! { |t| t['uri'] }
+
+  # soundcloud duration filtering isn't as reliable as it should be
+  # so double-check to make sure we only got back mixes
+  tracks.select! { |t| t.duration >= MINIMUM_TRACK_DURATION }
 
   tracks.each do |track|
     track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
