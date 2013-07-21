@@ -146,6 +146,12 @@ blacklist:
         - 24953603
         - 35855923
         - 49251033
+        - 51138205
+        - 8262006
+        - 51762571
+        - 51128021
+        - 32604208
+        - 19500881
     genre:
         - comedy
         - film
@@ -178,5 +184,6 @@ blacklist:
         - movies
         - interview
         - erotica
+        - cycling
     track_type:
         - spoken
