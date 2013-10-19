@@ -163,9 +163,7 @@ def explore_track_ids
   track_ids = []
   client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
   EXPLORE_CATEGORIES.each do |category|
-    # "https://api.soundcloud.com/explore/sounds/category/#{category}?limit=100&offset=0&linked_partitioning=1&client_id=#{SOUNDCLOUD_ID}"
     response = client.get("/explore/sounds/category/#{category}")
-
     track_ids.concat response['collection'].map { |c| c['tracks'] }.flatten.map {|t| t['id'] }
   end
   track_ids.uniq
