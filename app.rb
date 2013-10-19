@@ -192,6 +192,7 @@ def refresh_tracks
   end
   threads.each { |t| t.join }
 
+  puts "Fetching explore tracks"
   # include the tracks from the explore section as well
   explore_track_ids.each_slice(50) do |track_ids|
     tracks.concat tracks_by_ids(track_ids)
