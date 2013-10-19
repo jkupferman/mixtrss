@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby '1.9.2'
+
 gem 'rake', '0.8.7'
 
 # Bundle edge Rails instead:
