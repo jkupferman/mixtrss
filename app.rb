@@ -18,6 +18,7 @@ FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
 MINIMUM_TRACK_DURATION = 1200000
+EXPLORE_CATEGORIES = ["", "electronic", "pop", "rock", "urban"]
 
 AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "drum & bass", "dubstep",
@@ -73,7 +74,7 @@ def description mixes, genre
 end
 
 def canonical genre, page
-  "http://mixtrss.com/#{URI::encode(genre)}/#{page}"
+  "http://mixtrss.com/#{URI.escape(genre)}/#{page}"
 end
 
 post "/feedback" do
@@ -141,6 +142,35 @@ def fetch_tracks page, genre=nil, tag=nil
   end
 end
 
+def track_by_id track_id
+  client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
+  begin
+    track = client.get("/tracks/#{track_id}")
+    track if track && is_mix?(track)
+  rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
+    puts "Soundcloud::ResponseError - #{e} #{track_id}"
+  end
+end
+
+def tracks_by_ids track_ids
+  # multi-get for tracks, a maximum of 50 track ids can be fetched at once
+  client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
+  client.get("/tracks", {:ids => track_ids.join(",")}).select { |t| t && is_mix?(t) }
+end
+
+def explore_track_ids
+  # returns the list of track ids that are featured in soundclouds explore section
+  track_ids = []
+  client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
+  EXPLORE_CATEGORIES.each do |category|
+    # "https://api.soundcloud.com/explore/sounds/category/#{category}?limit=100&offset=0&linked_partitioning=1&client_id=#{SOUNDCLOUD_ID}"
+    response = client.get("/explore/sounds/category/#{category}")
+
+    track_ids.concat response['collection'].map { |c| c['tracks'] }.flatten.map {|t| t['id'] }
+  end
+  track_ids.uniq
+end
+
 def refresh_tracks
   tracks = []
   threads = []
@@ -162,11 +192,12 @@ def refresh_tracks
   end
   threads.each { |t| t.join }
 
-  tracks.uniq! { |t| t['uri'] }
+  # include the tracks from the explore section as well
+  explore_track_ids.each_slice(50) do |track_ids|
+    tracks.concat tracks_by_ids(track_ids)
+  end
 
-  # soundcloud duration filtering isn't as reliable as it should be
-  # so double-check to make sure we only got back mixes
-  tracks.select! { |t| t.duration >= MINIMUM_TRACK_DURATION }
+  tracks.uniq! { |t| t['uri'] }
 
   tracks.each do |track|
     track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
@@ -198,10 +229,13 @@ def is_mix? track
   # a music mix (instead of say a gaming podcast or interview)
   return false unless track
 
+  # it better be long enough...
+  return false if track['duration'] < MINIMUM_TRACK_DURATION
+
+  # check the track for any known blacklisted values (e.g. non-music accounts, bad genres)
   type = track['track_type'].to_s.downcase
   return false if BLACKLIST['track_type'].include? type
 
-  # filter out some known non-music accounts
   userid = (track['user'] || {})['id']
   return false if userid && BLACKLIST['userid'].include?(userid.to_i)
 
