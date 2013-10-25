@@ -170,6 +170,13 @@ blacklist:
         - 34475621
         - 57847979
         - 52561811
+        - 61530313
+        - 33724101
+        - 17000301
+        - 56834656
+        - 58576571
+        - 44619822
+        - 7352216
     genre:
         - comedy
         - film
@@ -203,5 +210,9 @@ blacklist:
         - interview
         - erotica
         - cycling
+        - apple
+        - nokia
+        - nsa
+        - ipad
     track_type:
         - spoken
