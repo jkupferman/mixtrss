@@ -177,6 +177,10 @@ blacklist:
         - 58576571
         - 44619822
         - 7352216
+        - 3009842
+        - 29898361
+        - 29134487
+        - 63115934
     genre:
         - comedy
         - film
@@ -198,6 +202,7 @@ blacklist:
         - talk radio
         - erotica
         - sports
+        - politics
     tag:
         - empire podcast
         - comedy
@@ -214,5 +219,6 @@ blacklist:
         - nokia
         - nsa
         - ipad
+        - politics
     track_type:
         - spoken
