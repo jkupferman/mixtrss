@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require "rubygems"
 require "dalli"
+require "memcachier"
 require "date"
 require "json"
 require "sinatra"

@@ -14,7 +14,7 @@ gem 'dalli'
 gem 'soundcloud'
 gem 'pony'
 
-gem 'heroku'
+gem 'memcachier'
 
 group :development do
   gem 'thin'
