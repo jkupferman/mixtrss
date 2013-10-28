@@ -181,6 +181,10 @@ blacklist:
         - 29898361
         - 29134487
         - 63115934
+        - 29292848
+        - 1362895
+        - 22158614
+        - 35833093
     genre:
         - comedy
         - film
@@ -203,6 +207,7 @@ blacklist:
         - erotica
         - sports
         - politics
+        - ufc
     tag:
         - empire podcast
         - comedy
@@ -220,5 +225,7 @@ blacklist:
         - nsa
         - ipad
         - politics
+        - mma
+        - ufc
     track_type:
         - spoken
