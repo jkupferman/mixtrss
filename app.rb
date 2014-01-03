@@ -107,6 +107,10 @@ def genre_key genre
   "toptracks/#{genre}"
 end
 
+def recent_tracks_key
+  "recenttracks"
+end
+
 def fetch_tracks page, genre=nil, tag=nil
   puts "#{Time.now}: Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
   params = {
@@ -170,6 +174,10 @@ def explore_track_ids
   track_ids.uniq
 end
 
+def recent_track_ids
+  settings.cache.get(recent_tracks_key) || []
+end
+
 def refresh_tracks
   tracks = []
   threads = []
@@ -191,9 +199,10 @@ def refresh_tracks
   end
   threads.each { |t| t.join }
 
-  puts "Fetching explore tracks"
-  # include the tracks from the explore section as well
-  explore_track_ids.each_slice(50) do |track_ids|
+  puts "Fetching explore and recent tracks"
+  # include the tracks from the explore section
+  # also include recently popular tracks to keep a longer history
+  (explore_track_ids + recent_track_ids).sort.uniq.each_slice(50) do |track_ids|
     tracks.concat tracks_by_ids(track_ids)
   end
 
@@ -201,17 +210,18 @@ def refresh_tracks
 
   tracks.each do |track|
     track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
+    track["freshness"] = freshness(track)
   end
 
   AVAILABLE_GENRES.each do |genre|
     genre_regex = /\b#{genre}\b/
     filtered_tracks = tracks.select { |t| genre == "all" || genre_regex =~ t["tags"] }
 
-    top_tracks = filtered_tracks.sort_by { |t| freshness(t) }.reverse[0...100]
+    top_tracks = filtered_tracks.sort_by { |t| t['freshness'] }.reverse[0...100]
     # filter out any extraneous data so the key will fit in memcached
     result = top_tracks.map do |e|
       { :uri => e['uri'],
-        :score => freshness(e),
+        :score => e['freshness'],
         :title => e['title'],
         :permalink => e['permalink_url'],
         :artist => e['user']['username'],
@@ -222,6 +232,9 @@ def refresh_tracks
     puts "Found #{result.length} tracks for #{genre}"
     settings.cache.set(genre_key(genre), result)
   end
+
+  recent_tracks = tracks.sort_by { |t| -t['freshness'] }[0...500].map { |t| t['id'].to_s }
+  settings.cache.set(recent_tracks_key, recent_tracks)
 end
 
 def is_mix? track
