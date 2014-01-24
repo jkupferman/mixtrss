@@ -19,7 +19,7 @@ FETCH_PAGE_SIZE = 200
 PAGE_FETCH_COUNT = 40
 RETURN_PAGE_SIZE = 10
 MINIMUM_TRACK_DURATION = 1200000
-EXPLORE_CATEGORIES = ["", "electronic", "pop", "rock", "urban"]
+EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno", "rock", "reggae"]
 
 AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                     "drum & bass", "dubstep",
@@ -166,10 +166,15 @@ end
 def explore_track_ids
   # returns the list of track ids that are featured in soundclouds explore section
   track_ids = []
-  client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
   EXPLORE_CATEGORIES.each do |category|
-    response = client.get("/explore/sounds/category/#{category}")
-    track_ids.concat response['collection'].map { |c| c['tracks'] }.flatten.map {|t| t['id'] }
+    # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
+    url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=100&offset=0&linked_partitioning=1"
+    begin
+      json = JSON.parse(open(url).read)
+    rescue OpenURI::HTTPError
+      puts "Error fetching explore category #{category}"
+    end
+    track_ids.concat json['tracks'].map { |t| t['id'] }
   end
   track_ids.uniq
 end
