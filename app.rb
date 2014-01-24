@@ -174,7 +174,7 @@ def explore_track_ids
     rescue OpenURI::HTTPError
       puts "Error fetching explore category #{category}"
     end
-    track_ids.concat json['tracks'].map { |t| t['id'] }
+    track_ids.concat json['tracks'].map { |t| t['id'].to_s }
   end
   track_ids.uniq
 end
