@@ -2,9 +2,9 @@
 require "rubygems"
 require "dalli"
 require "memcachier"
-require "date"
 require "sinatra"
 require "json"
+require "pony"
 
 set :cache, Dalli::Client.new
 set :static_cache_control, [:public, max_age: 60 * 60 * 24 * 365]
@@ -33,10 +33,31 @@ get "/mixes/:genre/:page" do
   mixes(genre, page).to_json
 end
 
+post "/feedback" do
+  Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
+            :to => 'jmkupferman+mixtress' + '@' + 'gmail.com',
+            :subject => "Mixtress feedback from #{params[:name]}",
+            :body => params[:message],
+            :port => '587',
+            :via => :smtp,
+            :via_options => {
+              :address              => 'smtp.gmail.com',
+              :port                 => '587',
+              :enable_starttls_auto => true,
+              :user_name            => ENV['GMAIL_SMTP_USER'],
+              :password             => ENV['GMAIL_SMTP_PASSWORD'],
+              :authentication       => :plain,
+              :domain               => 'localhost.localdomain'
+            })
+  redirect '/'
+end
+
+# Helper methods
+
 def genre_and_page genre, page
   # sanitize the incoming genre and page values to ensure they are valid
   genre = genre.to_s.strip.downcase
-  genre = AVAILABLE_GENRES.include?(genre) ? genre : "all"
+  genre = "all" unless AVAILABLE_GENRES.include?(genre)
 
   page = (page || 0).to_i
 
@@ -65,26 +86,6 @@ end
 
 def canonical genre, page
   "http://mixtrss.com/#{URI.escape(genre)}/#{page}"
-end
-
-post "/feedback" do
-  require 'pony'
-  Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
-            :to => 'jmkupferman+mixtress' + '@' + 'gmail.com',
-            :subject => "Mixtress feedback from #{params[:name]}",
-            :body => params[:message],
-            :port => '587',
-            :via => :smtp,
-            :via_options => {
-              :address              => 'smtp.gmail.com',
-              :port                 => '587',
-              :enable_starttls_auto => true,
-              :user_name            => ENV['GMAIL_SMTP_USER'],
-              :password             => ENV['GMAIL_SMTP_PASSWORD'],
-              :authentication       => :plain,
-              :domain               => 'localhost.localdomain'
-            })
-  redirect '/'
 end
 
 def mixes_for_genre genre
