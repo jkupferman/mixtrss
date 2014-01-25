@@ -22,94 +22,48 @@ class TrackRefresher
                       "techno", "trance", "trap"]
 
   def initialize
-    @cache = Dalli::Client.new 
+    @cache = Dalli::Client.new
   end
 
   def refresh!
-    refresh_tracks
-  end
+    tracks  = tracks_from_search + tracks_from_explore + recently_popular_tracks
 
-  def genre_key genre
-    "toptracks/#{genre}"
-  end
+    tracks.uniq! { |t| t['uri'] }
 
-  def recent_tracks_key
-    "recenttracks"
-  end
-
-  def fetch_tracks page, genre=nil, tag=nil
-    puts "#{Time.now}: Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
-    params = {
-      :duration => {
-        :from => MINIMUM_TRACK_DURATION
-      },
-      :order => "hotness",
-      :limit => FETCH_PAGE_SIZE,
-      :offset => page.to_i * FETCH_PAGE_SIZE
-    }
-    params[:genres] = genre if genre
-    params[:tags] = tag if tag
-
-    attempts = 0
-    begin
-      client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
-      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
-    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
-      puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
-      if e.respond_to?(:message)
-        puts "Message: #{e.response.code} - #{e.message}"
-      end
-      attempts += 1
-      sleep(attempts * 2)
-      if attempts < 20
-        retry
-      else
-        []
-      end
-    rescue Crack::ParseError
-      # TODO: Why are these happening?
-      puts "ParseError! #{params}"
-      []
+    tracks.each do |track|
+      # combine and normalize tags and genres into one field
+      track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
+      track["freshness"] = freshness(track)
     end
-  end
 
-  def track_by_id track_id
-    client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
-    begin
-      track = client.get("/tracks/#{track_id}")
-      track if track && is_mix?(track)
-    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
-      puts "Soundcloud::ResponseError - #{e} #{track_id}"
-    end
-  end
+    tracks.sort_by! { |t| -t['freshness'] }
 
-  def tracks_by_ids track_ids
-    # multi-get for tracks, a maximum of 50 track ids can be fetched at once
-    client = Soundcloud.new(:client_id => SOUNDCLOUD_ID)
-    client.get("/tracks", {:ids => track_ids.join(",")}).select { |t| t && is_mix?(t) }
-  end
+    # store the top tracks for each genre
+    AVAILABLE_GENRES.each do |genre|
+      genre_regex = /\b#{genre}\b/
+      top_tracks_by_genre = tracks.select { |t| genre == "all" || genre_regex =~ t["tags"] }[0...100]
 
-  def explore_track_ids
-    # returns the list of track ids that are featured in soundclouds explore section
-    track_ids = []
-    EXPLORE_CATEGORIES.each do |category|
-      # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=100&offset=0&linked_partitioning=1"
-      begin
-        json = JSON.parse(open(url).read)
-      rescue OpenURI::HTTPError
-        puts "Error fetching explore category #{category}"
+      # filter out any extraneous data so it will fit within the memcached size limit
+      filtered_tracks = top_tracks_by_genre.map do |e|
+        {
+          uri: e['uri'],
+          score: e['freshness'],
+          title: e['title'],
+          permalink: e['permalink_url'],
+          artist: e['user']['username'],
+          downloadable: e['downloadable'],
+          created_at: Time.parse(e['created_at']).getutc.iso8601
+        }
       end
-      track_ids.concat json['tracks'].map { |t| t['id'].to_s }
+      puts "Found #{filtered_tracks.length} tracks for #{genre}"
+      @cache.set(genre_key(genre), filtered_tracks)
     end
-    track_ids.uniq
+
+    @cache.set(recent_tracks_key, tracks[0...500].map { |t| t['id'].to_s })
   end
 
-  def recent_track_ids
-    @cache.get(recent_tracks_key) || []
-  end
-
-  def refresh_tracks
+  def tracks_from_search
+    # scour the soundcloud search api to get all the mixes we can find. this method takes about five minutes to run
     tracks = []
     threads = []
     AVAILABLE_GENRES.each do |genre|
@@ -130,42 +84,70 @@ class TrackRefresher
     end
     threads.each { |t| t.join }
 
-    puts "Fetching explore and recent tracks"
-    # include the tracks from the explore section
-    # also include recently popular tracks to keep a longer history
-    (explore_track_ids + recent_track_ids).sort.uniq.each_slice(50) do |track_ids|
-      tracks.concat tracks_by_ids(track_ids)
-    end
+    tracks
+  end
 
-    tracks.uniq! { |t| t['uri'] }
+  def fetch_tracks page, genre=nil, tag=nil
+    puts "#{Time.now}: Requesting #{FETCH_PAGE_SIZE} #{page*FETCH_PAGE_SIZE} tag:#{tag} genre:#{genre}"
+    params = {
+      duration: { from: MINIMUM_TRACK_DURATION },
+      order: "hotness",
+      limit: FETCH_PAGE_SIZE,
+      offset: page.to_i * FETCH_PAGE_SIZE
+    }
+    params[:genres] = genre if genre
+    params[:tags] = tag if tag
 
-    tracks.each do |track|
-      track["tags"] = (track['tag_list'].to_s << " " << track["genre"].to_s).downcase
-      track["freshness"] = freshness(track)
-    end
-
-    AVAILABLE_GENRES.each do |genre|
-      genre_regex = /\b#{genre}\b/
-      filtered_tracks = tracks.select { |t| genre == "all" || genre_regex =~ t["tags"] }
-
-      top_tracks = filtered_tracks.sort_by { |t| t['freshness'] }.reverse[0...100]
-      # filter out any extraneous data so the key will fit in memcached
-      result = top_tracks.map do |e|
-        { :uri => e['uri'],
-          :score => e['freshness'],
-          :title => e['title'],
-          :permalink => e['permalink_url'],
-          :artist => e['user']['username'],
-          :downloadable => e['downloadable'],
-          :created_at => Time.parse(e['created_at']).getutc.iso8601
-        }
+    attempts = 0
+    begin
+      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
+    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET, Crack::ParseError => e
+      puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
+      if e.respond_to?(:message)
+        puts "Message: #{e.response.code} - #{e.message}"
       end
-      puts "Found #{result.length} tracks for #{genre}"
-      @cache.set(genre_key(genre), result)
+      attempts += 1
+      sleep(attempts * 2)
+      if attempts < 20
+        retry
+      else
+        []
+      end
     end
+  end
 
-    recent_tracks = tracks.sort_by { |t| -t['freshness'] }[0...500].map { |t| t['id'].to_s }
-    @cache.set(recent_tracks_key, recent_tracks)
+  def track_by_id track_id
+    begin
+      track = client.get("/tracks/#{track_id}")
+      track if track && is_mix?(track)
+    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
+      puts "Soundcloud::ResponseError - #{e} #{track_id}"
+    end
+  end
+
+  def tracks_by_ids track_ids
+    # multi-get for tracks, a maximum of 50 track ids can be fetched at once
+    client.get("/tracks", {:ids => track_ids.join(",")}).select { |t| t && is_mix?(t) }
+  end
+
+  def tracks_from_explore
+    # returns the list of track ids that are featured in soundclouds explore section
+    track_ids = []
+    EXPLORE_CATEGORIES.each do |category|
+      # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
+      url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=100&offset=0&linked_partitioning=1"
+      begin
+        json = JSON.parse(open(url).read)
+      rescue OpenURI::HTTPError
+        puts "Error fetching explore category #{category}"
+      end
+      track_ids.concat json['tracks'].map { |t| t['id'].to_s }
+    end
+    tracks = []
+    track_ids.sort.uniq.each_slice(50) do |ids|
+      tracks.concat tracks_by_ids(ids)
+    end
+    tracks
   end
 
   def is_mix? track
@@ -198,8 +180,29 @@ class TrackRefresher
     # returns a floating point number, representing the "freshness" of the track
     elapsed = (Date.today - Date.parse(track["created_at"]))
     elapsed = 1 if elapsed < 1
-    plays = track["playback_count"]
-    plays = 1 if plays.nil? || plays < 1
+    plays = track["playback_count"].to_i
+    plays = 1 if plays < 1
     plays.to_f / (elapsed ** 1.2)
+  end
+
+  def recently_popular_tracks
+    track_ids = @cache.get(recent_tracks_key) || []
+    tracks = []
+    track_ids.sort.uniq.each_slice(50) do |ids|
+      tracks.concat tracks_by_ids(ids)
+    end
+    tracks
+  end
+
+  def genre_key genre
+    "toptracks/#{genre}"
+  end
+
+  def recent_tracks_key
+    "recenttracks"
+  end
+
+  def client
+    Soundcloud.new(client_id: SOUNDCLOUD_ID)
   end
 end
