@@ -127,7 +127,9 @@ class TrackRefresher
 
   def tracks_by_ids track_ids
     # multi-get for tracks, a maximum of 50 track ids can be fetched at once
-    client.get("/tracks", {:ids => track_ids.join(",")}).select { |t| t && is_mix?(t) }
+    track_ids.sort.uniq.each_slice(50).map do |ids|
+      client.get("/tracks", {ids: ids.join(",")}).select { |t| t && is_mix?(t) }
+    end.flatten
   end
 
   def tracks_from_explore
@@ -143,11 +145,7 @@ class TrackRefresher
       end
       track_ids.concat json['tracks'].map { |t| t['id'].to_s }
     end
-    tracks = []
-    track_ids.sort.uniq.each_slice(50) do |ids|
-      tracks.concat tracks_by_ids(ids)
-    end
-    tracks
+    tracks_by_ids track_ids
   end
 
   def is_mix? track
@@ -186,12 +184,7 @@ class TrackRefresher
   end
 
   def recently_popular_tracks
-    track_ids = @cache.get(recent_tracks_key) || []
-    tracks = []
-    track_ids.sort.uniq.each_slice(50) do |ids|
-      tracks.concat tracks_by_ids(ids)
-    end
-    tracks
+    tracks_by_ids(@cache.get(recent_tracks_key) || [])
   end
 
   def genre_key genre
