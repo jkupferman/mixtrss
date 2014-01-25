@@ -13,7 +13,7 @@ class TrackRefresher
   BLACKLIST = YAML.load_file("config/blacklist.yml")['blacklist']
 
   FETCH_PAGE_SIZE = 200
-  PAGE_FETCH_COUNT = 1
+  PAGE_FETCH_COUNT = 40
   RETURN_PAGE_SIZE = 10
   MINIMUM_TRACK_DURATION = 1200000
   EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno", "rock", "reggae"]
