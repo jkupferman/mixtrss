@@ -5,15 +5,12 @@ require "memcachier"
 require "sinatra"
 require "json"
 require "pony"
+require "./lib/common"
 
 set :cache, Dalli::Client.new
 set :static_cache_control, [:public, max_age: 60 * 60 * 24 * 365]
 
 RETURN_PAGE_SIZE = 10
-AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
-                    "drum & bass", "dubstep",
-                    "electro", "house", "mashup",
-                    "techno", "trance", "trap"]
 
 get "/:genre?/?:page?" do
   genre, page = genre_and_page params[:genre], params[:page]
@@ -57,7 +54,7 @@ end
 def genre_and_page genre, page
   # sanitize the incoming genre and page values to ensure they are valid
   genre = genre.to_s.strip.downcase
-  genre = "all" unless AVAILABLE_GENRES.include?(genre)
+  genre = "all" unless Common::AVAILABLE_GENRES.include?(genre)
 
   page = (page || 0).to_i
 
@@ -90,13 +87,5 @@ end
 
 def mixes_for_genre genre
   # fetches the precomputed mixes from memcache
-  settings.cache.get(genre_key(genre)) || []
-end
-
-def genre_key genre
-  "toptracks/#{genre}"
-end
-
-def recent_tracks_key
-  "recenttracks"
+  settings.cache.get(Common.genre_key(genre)) || []
 end

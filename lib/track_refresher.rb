@@ -5,6 +5,8 @@ require "json"
 require "soundcloud"
 require "yaml"
 require "open-uri"
+require "./lib/common"
+
 
 class TrackRefresher
   SOUNDCLOUD_ID = ENV["SOUNDCLOUD_ID"] || YAML.load_file("config/soundcloud.yml")["id"]
@@ -16,10 +18,7 @@ class TrackRefresher
   MINIMUM_TRACK_DURATION = 1200000
   EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno", "rock", "reggae"]
 
-  AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
-                      "drum & bass", "dubstep",
-                      "electro", "house", "mashup",
-                      "techno", "trance", "trap"]
+  AVAILABLE_GENRES = Common::AVAILABLE_GENRES
 
   def initialize
     @cache = Dalli::Client.new
@@ -56,7 +55,7 @@ class TrackRefresher
         }
       end
       puts "Found #{filtered_tracks.length} tracks for #{genre}"
-      @cache.set(genre_key(genre), filtered_tracks)
+      @cache.set(Common.genre_key(genre), filtered_tracks)
     end
 
     @cache.set(recent_tracks_key, tracks[0...500].map { |t| t['id'].to_s })
@@ -185,10 +184,6 @@ class TrackRefresher
 
   def recently_popular_tracks
     tracks_by_ids(@cache.get(recent_tracks_key) || [])
-  end
-
-  def genre_key genre
-    "toptracks/#{genre}"
   end
 
   def recent_tracks_key
