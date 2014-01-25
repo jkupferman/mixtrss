@@ -1,9 +1,6 @@
 require './lib/track_refresher'
 
-task :default => [:noop]
-
-task :noop do
-end
+task default: [:refresh_tracks]
 
 task :refresh_tracks do
   # Heroku only has hourly tasks, we only want to run ever four hours so don't actually run on the off-cycles.
