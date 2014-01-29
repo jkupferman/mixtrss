@@ -16,7 +16,9 @@ class TrackRefresher
   PAGE_FETCH_COUNT = 40
   RETURN_PAGE_SIZE = 10
   MINIMUM_TRACK_DURATION = 1200000
-  EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno", "rock", "reggae"]
+  EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno",
+                        "rock", "reggae", "mixtape", "minimal%2Btechno", "ambient", "deep%2Bhouse",
+                        "drum%2B%26%2Bbass", "electro", "hardcore%2Btechno"]
 
   AVAILABLE_GENRES = Common::AVAILABLE_GENRES
 
@@ -136,13 +138,13 @@ class TrackRefresher
     track_ids = []
     EXPLORE_CATEGORIES.each do |category|
       # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=100&offset=0&linked_partitioning=1"
+      url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=50&offset=0&linked_partitioning=1"
       begin
         json = JSON.parse(open(url).read)
       rescue OpenURI::HTTPError
         puts "Error fetching explore category #{category}"
       end
-      track_ids.concat json['tracks'].map { |t| t['id'].to_s }
+      track_ids.concat json['tracks'].map { |t| t['id'].to_s } if json
     end
     tracks_by_ids track_ids
   end
