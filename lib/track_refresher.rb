@@ -139,7 +139,7 @@ class TrackRefresher
       url = "https://api-v2.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=50&offset=0&linked_partitioning=1"
       begin
         json = JSON.parse(open(url).read)
-      rescue OpenURI::HTTPError
+      rescue OpenURI::HTTPError, SocketError
         puts "Error fetching explore category #{category}"
       end
       track_ids.concat json['tracks'].map { |t| t['id'].to_s } if json
