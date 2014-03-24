@@ -16,9 +16,7 @@ class TrackRefresher
   PAGE_FETCH_COUNT = 40
   RETURN_PAGE_SIZE = 10
   MINIMUM_TRACK_DURATION = 1200000
-  EXPLORE_CATEGORIES = ["Popular%2BMusic", "dubstep", "house", "electronic", "pop", "techno",
-                        "rock", "reggae", "mixtape", "minimal%2Btechno", "ambient", "deep%2Bhouse",
-                        "drum%2B%26%2Bbass", "electro", "hardcore%2Btechno"]
+  EXPLORE_CATEGORIES = ["Popular%2BMusic", "ambient", "dance", "deep%2Bhouse", "disco", "drum%2B%26%2Bbass", "dubstep", "electro", "electronic",  "hardcore%2Btechno", "hip%2Bhop", "house", "indie%2Brock", "minimal%2Btechno", "mixtape", "pop", "progressive%2Bhouse", "r%26b", "rap", "reggae", "rock", "soul", "tech%2Bhouse", "techno", "trance", "trap", "trip%2Bhop"]
 
   AVAILABLE_GENRES = Common::AVAILABLE_GENRES
 
@@ -138,7 +136,7 @@ class TrackRefresher
     track_ids = []
     EXPLORE_CATEGORIES.each do |category|
       # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-web.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=50&offset=0&linked_partitioning=1"
+      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=uniform-time-decay-experiment%3A1%3A1389973574&limit=50&offset=0&linked_partitioning=1"
       begin
         json = JSON.parse(open(url).read)
       rescue OpenURI::HTTPError
