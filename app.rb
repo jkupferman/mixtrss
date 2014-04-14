@@ -31,21 +31,21 @@ get "/mixes/:genre/:page" do
 end
 
 post "/feedback" do
-  Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
-            :to => 'jmkupferman+mixtress' + '@' + 'gmail.com',
-            :subject => "Mixtress feedback from #{params[:name]}",
-            :body => params[:message],
-            :port => '587',
-            :via => :smtp,
-            :via_options => {
-              :address              => 'smtp.gmail.com',
-              :port                 => '587',
-              :enable_starttls_auto => true,
-              :user_name            => ENV['GMAIL_SMTP_USER'],
-              :password             => ENV['GMAIL_SMTP_PASSWORD'],
-              :authentication       => :plain,
-              :domain               => 'localhost.localdomain'
-            })
+  # Pony.mail(:from => params[:name] + "<" + params[:email] + ">",
+  #           :to => 'jmkupferman+mixtress' + '@' + 'gmail.com',
+  #           :subject => "Mixtress feedback from #{params[:name]}",
+  #           :body => params[:message],
+  #           :port => '587',
+  #           :via => :smtp,
+  #           :via_options => {
+  #             :address              => 'smtp.gmail.com',
+  #             :port                 => '587',
+  #             :enable_starttls_auto => true,
+  #             :user_name            => ENV['GMAIL_SMTP_USER'],
+  #             :password             => ENV['GMAIL_SMTP_PASSWORD'],
+  #             :authentication       => :plain,
+  #             :domain               => 'localhost.localdomain'
+  #           })
   redirect '/'
 end
 
