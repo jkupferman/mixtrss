@@ -188,8 +188,7 @@ div.info div.meter.h0   { width: 0px;   }
 
 @media (max-width:768px) {
     .addthis_toolbox {
-        position: absolute;
-        top: 20px;
+        display: none;
     }
 
     ul.genres li.genre a {
