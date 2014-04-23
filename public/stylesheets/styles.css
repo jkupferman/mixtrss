@@ -97,6 +97,7 @@ div.info div.meter {
     height: 15px;
     margin-left: 2px;
     display: inline-block;
+    max-width: 100%;
 }
 
 div.info div.meter.h500 { width: 545px; }
@@ -183,6 +184,17 @@ div.info div.meter.h0   { width: 0px;   }
 
 .right {
     float: right;
+}
+
+@media (max-width:768px) {
+    .addthis_toolbox {
+        position: absolute;
+        top: 20px;
+    }
+
+    ul.genres li.genre a {
+        margin: 0 8px;
+    }
 }
 
 .hidden {
