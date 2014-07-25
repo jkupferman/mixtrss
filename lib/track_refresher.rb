@@ -27,7 +27,7 @@ class TrackRefresher
   def refresh!
     tracks  = tracks_from_search + tracks_from_explore + recently_popular_tracks
 
-    tracks.uniq! { |t| t['uri'] }
+    tracks.uniq! { |t| t['uri'].strip.gsub("https:", "http:") }
 
     tracks.each do |track|
       # combine and normalize tags and genres into one field
