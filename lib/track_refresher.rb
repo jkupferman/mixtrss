@@ -58,7 +58,7 @@ class TrackRefresher
       @cache.set(Common.genre_key(genre), filtered_tracks)
     end
 
-    @cache.set(recent_tracks_key, tracks[0...500].map { |t| t['id'].to_s })
+    @cache.set(recent_tracks_key, tracks[0...2000].map { |t| t['id'].to_s })
   end
 
   def tracks_from_search
