@@ -14,9 +14,8 @@ class TrackRefresher
 
   FETCH_PAGE_SIZE = 200
   PAGE_FETCH_COUNT = 40
-  RETURN_PAGE_SIZE = 10
   MINIMUM_TRACK_DURATION = 1200000
-  EXPLORE_CATEGORIES = ["Popular%2BMusic", "ambient", "dance", "deep%2Bhouse", "disco", "drum%2B%26%2Bbass", "dubstep", "electro", "electronic",  "hardcore%2Btechno", "hip%2Bhop", "house", "indie%2Brock", "minimal%2Btechno", "mixtape", "pop", "progressive%2Bhouse", "r%26b", "rap", "reggae", "rock", "soul", "tech%2Bhouse", "techno", "trance", "trap", "trip%2Bhop"]
+  EXPLORE_CATEGORIES = ["Popular%2BMusic", "ambient", "dance", "deep%2Bhouse", "disco", "drum%2B%26%2Bbass", "dubstep", "electro", "electronic",  "hardcore%2Btechno", "hip%2Bhop", "house", "indie%2Brock", "minimal%2Btechno", "pop", "progressive%2Bhouse", "r%26b", "rap", "reggae", "rock", "soul", "tech%2Bhouse", "techno", "trance", "trap", "trip%2Bhop"]
 
   AVAILABLE_GENRES = Common::AVAILABLE_GENRES
 

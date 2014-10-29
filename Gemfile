@@ -1,11 +1,8 @@
 source 'http://rubygems.org'
 
-ruby '1.9.2'
+ruby '2.1.3'
 
-gem 'rake', '0.8.7'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'rake'
 
 gem 'sinatra'
 gem 'shotgun'
