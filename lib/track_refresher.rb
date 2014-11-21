@@ -99,7 +99,7 @@ class TrackRefresher
     attempts = 0
     begin
       client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
-    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET, Crack::ParseError => e
+    rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET => e
       puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
       if e.respond_to?(:message) && e.respond_to?(:response)
         puts "Message: #{e.response.code} - #{e.message}"
