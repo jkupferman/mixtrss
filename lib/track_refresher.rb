@@ -23,8 +23,10 @@ class TrackRefresher
     @cache = Dalli::Client.new
   end
 
-  def refresh!
-    tracks  = tracks_from_search + tracks_from_explore + recently_popular_tracks
+  def refresh! fast=false
+    tracks = recently_popular_tracks
+    # searching and fetching from explore takes a while, so don't do them in fast mode
+    tracks += tracks_from_explore + tracks_from_search if !fast
 
     tracks.uniq! { |t| t['uri'].strip.gsub("https:", "http:") }
 
@@ -131,6 +133,7 @@ class TrackRefresher
   end
 
   def tracks_from_explore
+    puts "#{Time.now}: Requesting tracks from explore"
     # returns the list of track ids that are featured in soundclouds explore section
     track_ids = []
     EXPLORE_CATEGORIES.each do |category|
@@ -182,6 +185,7 @@ class TrackRefresher
   end
 
   def recently_popular_tracks
+    puts "#{Time.now}: Requesting recently popular tracks"
     tracks_by_ids(@cache.get(recent_tracks_key) || [])
   end
 
