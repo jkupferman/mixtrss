@@ -259,6 +259,12 @@ blacklist:
         - 43489421
         - 115833919
         - 26172268
+        - 98602096
+        - 4483126
+        - 82293958
+        - 120580201
+        - 48684217
+        - 62921190
     genre:
         - comedy
         - film
@@ -301,5 +307,6 @@ blacklist:
         - politics
         - mma
         - ufc
+        - wrestling
     track_type:
         - spoken
