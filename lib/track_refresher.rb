@@ -26,7 +26,7 @@ class TrackRefresher
   def refresh! fast=false
     tracks = recently_popular_tracks
     # searching and fetching from explore takes a while, so don't do them in fast mode
-    tracks += tracks_from_explore + tracks_from_search if !fast
+    tracks += tracks_from_explore + tracks_from_search unless fast
 
     tracks.uniq! { |t| t['uri'].strip.gsub("https:", "http:") }
 
@@ -146,6 +146,7 @@ class TrackRefresher
       end
       track_ids.concat json['tracks'].map { |t| t['id'].to_s } if json
     end
+    puts "#{Time.now}: Found #{track_ids.length} tracks in explore"
     tracks_by_ids track_ids
   end
 
