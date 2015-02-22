@@ -138,7 +138,7 @@ class TrackRefresher
     track_ids = []
     EXPLORE_CATEGORIES.each do |category|
       # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=tag=out-of-experiment&limit=50&offset=0&linked_partitioning=1"
+      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=tag=out-of-experiment&limit=200&offset=0&linked_partitioning=1"
       begin
         json = JSON.parse(open(url).read)
       rescue OpenURI::HTTPError, SocketError
