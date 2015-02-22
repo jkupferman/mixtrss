@@ -3,7 +3,7 @@ class Common
   AVAILABLE_GENRES = ["all", "bass", "dance", "deep",
                       "drum & bass", "dubstep",
                       "electro", "house", "mashup",
-                      "techno", "trance", "trap"]
+                      "techno", "trance", "tropical"]
 
   def self.genre_key genre
     "toptracks/#{genre}"
