@@ -153,7 +153,7 @@ class TrackRefresher
   def is_mix? track
     # Given a track this function does its best to determine if it's actually
     # a music mix (instead of say a gaming podcast or interview)
-    return false unless track
+    return false if track.nil? || track.empty?
 
     # it better be long enough...
     return false if track['duration'] < MINIMUM_TRACK_DURATION
