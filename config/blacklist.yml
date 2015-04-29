@@ -317,6 +317,15 @@ blacklist:
         - 145868116
         - 22213770
         - 135193980
+        - 7573875
+        - 18261184
+        - 20170457
+        - 60129787
+        - 85260292
+        - 112134450
+        - 122922135
+        - 136519366
+        - 7573875
     genre:
         - comedy
         - film
@@ -340,6 +349,7 @@ blacklist:
         - sports
         - politics
         - ufc
+        - scotus
     tag:
         - empire podcast
         - comedy
@@ -361,5 +371,6 @@ blacklist:
         - mma
         - ufc
         - wrestling
+        - scotus
     track_type:
         - spoken
