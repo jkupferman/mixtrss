@@ -100,7 +100,7 @@ class TrackRefresher
 
     attempts = 0
     begin
-      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) }
+      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) && t["playback_count"].to_i > 20 }
     rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET, JSON::ParserError => e
       puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
       if e.respond_to?(:message) && e.respond_to?(:response)
