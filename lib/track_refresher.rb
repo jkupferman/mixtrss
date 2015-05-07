@@ -28,6 +28,7 @@ class TrackRefresher
     # searching and fetching from explore takes a while, so don't do them in fast mode
     tracks += tracks_from_explore + tracks_from_search unless fast
 
+    puts "Ordering and bucketing tracks..."
     tracks.uniq! { |t| t['uri'].strip.gsub("https:", "http:") }
 
     tracks.each do |track|
@@ -78,7 +79,7 @@ class TrackRefresher
 
     tracks = []
     threads = []
-    20.times do |i|
+    15.times do |i|
       threads << Thread.new do
         # have each thread sleep for a bit to avoid stampeding the soundcloud api
         sleep(rand() * 20)
