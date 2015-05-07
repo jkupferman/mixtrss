@@ -64,21 +64,27 @@ class TrackRefresher
 
   def tracks_from_search
     # scour the soundcloud search api to get all the mixes we can find. this method takes about five minutes to run
+    combinations = Queue.new
+    PAGE_FETCH_COUNT.times do |i|
+      combinations << [i, nil, nil]
+      AVAILABLE_GENRES.each do |genre|
+        next if genre == "all"
+        # grab mixes for the specific genre to make sure fill them out
+        # only grab a few pages since most genres aren't very deep
+        combinations << [i, genre, nil] if i < 10
+        combinations << [i, nil, genre] if i < 10
+      end
+    end
+
     tracks = []
     threads = []
-    AVAILABLE_GENRES.each do |genre|
+    20.times do |i|
       threads << Thread.new do
-        PAGE_FETCH_COUNT.times do |i|
-          # have each thread sleep for a bit to avoid stampeding the soundcloud api
-          sleep(rand() * 20)
-          if genre == "all"
-            tracks.concat(fetch_tracks(i))
-          elsif i < 10
-            # grab mixes for the specific genre to make sure fill them out
-            # only grab a few pages since most genres aren't very deep
-            tracks.concat(fetch_tracks(i, genre, nil))
-            tracks.concat(fetch_tracks(i, nil, genre))
-          end
+        # have each thread sleep for a bit to avoid stampeding the soundcloud api
+        sleep(rand() * 20)
+        while combinations.length > 0
+          combo = combinations.pop
+          tracks.concat(fetch_tracks(*combo)) if combo.length > 0
         end
       end
     end
@@ -138,7 +144,7 @@ class TrackRefresher
     track_ids = []
     EXPLORE_CATEGORIES.each do |category|
       # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=tag=out-of-experiment&limit=200&offset=0&linked_partitioning=1"
+      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=out-of-experiment&limit=200&offset=0&linked_partitioning=1"
       begin
         json = JSON.parse(open(url).read)
       rescue OpenURI::HTTPError, SocketError
