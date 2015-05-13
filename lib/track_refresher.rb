@@ -61,6 +61,8 @@ class TrackRefresher
     end
 
     @cache.set(recent_tracks_key, tracks[0...10000].map { |t| t['id'].to_s })
+
+    puts "All Done!"
   end
 
   def tracks_from_search
