@@ -44,8 +44,8 @@ var Mixtress = new Backbone.Application({
             mixes: function(genre, page) {
                 console.log("MIXES CALLED:", genre, page);
 
-                Mixtress.views.navigationView = new Mixtress.View.NavigationView({genre: genre});
-                Mixtress.views.navigationView.render();
+                // Mixtress.views.navigationView = new Mixtress.View.NavigationView({genre: genre});
+                // Mixtress.views.navigationView.render();
 
                 Mixtress.views.paginationView = new Mixtress.View.PaginationView({genre: genre, page: page});
                 Mixtress.views.paginationView.render();
