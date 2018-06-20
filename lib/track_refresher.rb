@@ -15,7 +15,6 @@ class TrackRefresher
   FETCH_PAGE_SIZE = 200
   PAGE_FETCH_COUNT = 40
   MINIMUM_TRACK_DURATION = 1200000
-  EXPLORE_CATEGORIES = ["Popular%2BMusic", "ambient", "deep%2Bhouse", "disco", "drum%2B%26%2Bbass", "dubstep", "electronic", "house", "pop", "reggae", "rock", "techno", "trance", "trap", "trip%2Bhop", "dance%2B%26%2Bedm", "dancehall", "indie", "r%26b%2B%26%2Bsoul", "hip%2Bhop%2B%26%2Brap"]
 
   AVAILABLE_GENRES = Common::AVAILABLE_GENRES
 
@@ -25,8 +24,8 @@ class TrackRefresher
 
   def refresh! fast=false
     tracks = recently_popular_tracks
-    # searching and fetching from explore takes a while, so don't do them in fast mode
-    tracks += tracks_from_explore + tracks_from_search unless fast
+    # searching takes a while, so don't do them in fast mode
+    tracks += tracks_from_search unless fast
 
     puts "Ordering and bucketing tracks..."
     tracks.uniq! { |t| t['uri'].strip.gsub("https:", "http:") }
@@ -109,7 +108,7 @@ class TrackRefresher
 
     attempts = 0
     begin
-      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) && t["playback_count"].to_i > 100 }
+      client.get("/tracks", params).to_a.select { |t| t && is_mix?(t) && t["playback_count"].to_i > 20 }
     rescue Soundcloud::ResponseError, Timeout::Error, Errno::ECONNRESET, JSON::ParserError => e
       puts "Soundcloud::ResponseError - #{e} for #{page} #{genre} #{tag}"
       if e.respond_to?(:message) && e.respond_to?(:response)
@@ -139,24 +138,6 @@ class TrackRefresher
     track_ids.sort.uniq.each_slice(50).map do |ids|
       client.get("/tracks", {ids: ids.join(",")}).select { |t| t && is_mix?(t) }
     end.flatten
-  end
-
-  def tracks_from_explore
-    puts "#{Time.now}: Requesting tracks from explore"
-    # returns the list of track ids that are featured in soundclouds explore section
-    track_ids = []
-    EXPLORE_CATEGORIES.each do |category|
-      # soundcloud exposes explore via their web api which isnt accessible via the gem, so grab it from the url directly
-      url = "https://api-v2.soundcloud.com/explore/#{category}?tag=out-of-experiment&limit=200&offset=0&linked_partitioning=1"
-      begin
-        json = JSON.parse(open(url).read)
-      rescue OpenURI::HTTPError, SocketError
-        puts "Error fetching explore category #{category}"
-      end
-      track_ids.concat json['tracks'].map { |t| t['id'].to_s } if json
-    end
-    puts "#{Time.now}: Found #{track_ids.length} tracks in explore"
-    tracks_by_ids track_ids
   end
 
   def is_mix? track
